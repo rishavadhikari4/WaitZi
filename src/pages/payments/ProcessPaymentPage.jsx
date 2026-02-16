@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { getOrder } from '../../api/orders';
+import { getOrder, completeOrder } from '../../api/orders';
 import { processPayment } from '../../api/payments';
 import useAuth from '../../hooks/useAuth';
 import PageHeader from '../../components/shared/PageHeader';
@@ -40,6 +40,7 @@ export default function ProcessPaymentPage() {
       };
       if (form.transactionId) data.transactionId = form.transactionId;
       const res = await processPayment(data);
+      await completeOrder(orderId).catch(() => {});
       toast.success('Payment processed');
       navigate(`/payments/${res.data?._id || ''}`);
     } catch (err) {

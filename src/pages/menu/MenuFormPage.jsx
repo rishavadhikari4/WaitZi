@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { getMenuItem, createMenuItem, updateMenuItem } from '../../api/menu';
+import { getStaffMenuItem, createMenuItem, updateMenuItem } from '../../api/menu';
 import { getCategories } from '../../api/categories';
 import PageHeader from '../../components/shared/PageHeader';
 import Input from '../../components/ui/Input';
@@ -27,7 +27,7 @@ export default function MenuFormPage() {
   useEffect(() => {
     getCategories().then((res) => setCategories(res.data || [])).catch(() => {});
     if (isEdit) {
-      getMenuItem(id)
+      getStaffMenuItem(id)
         .then((res) => {
           const item = res.data;
           setForm({

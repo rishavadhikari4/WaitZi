@@ -16,3 +16,9 @@ export const updateMenuAvailability = (id, availabilityStatus) =>
   api.patch(`/menu/${id}/availability`, { availabilityStatus });
 
 export const deleteMenuItem = (id) => api.delete(`/menu/${id}`);
+
+export const getAllMenuItems = (params) => api.get('/menu', { params });
+
+export const getStaffMenuByCategory = (categoryId) => api.get(`/menu/category/${categoryId}`);
+
+export const getStaffMenuItem = (id) => api.get(`/menu/${id}`);

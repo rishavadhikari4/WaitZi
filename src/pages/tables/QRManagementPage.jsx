@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { Download, QrCode } from 'lucide-react';
+import { Download, QrCode, BarChart3 } from 'lucide-react';
 import { getAllTables } from '../../api/tables';
-import { generateQR, downloadQR } from '../../api/qr';
+import { generateQR, downloadQR, generateAllQRs, getQRAnalytics } from '../../api/qr';
 import PageHeader from '../../components/shared/PageHeader';
+import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
 
 export default function QRManagementPage() {
   const [tables, setTables] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGeneratingAll, setIsGeneratingAll] = useState(false);
   const [qrImages, setQrImages] = useState({});
+  const [analytics, setAnalytics] = useState({});
 
   useEffect(() => {
     getAllTables({ limit: 100 })
@@ -28,6 +31,24 @@ export default function QRManagementPage() {
     }
   };
 
+  const handleGenerateAll = async () => {
+    setIsGeneratingAll(true);
+    try {
+      const res = await generateAllQRs();
+      const qrCodes = res.data?.qrCodes || res.data || [];
+      const newImages = {};
+      qrCodes.forEach((qr) => {
+        if (qr.tableId && qr.qrCode) newImages[qr.tableId] = qr.qrCode;
+      });
+      setQrImages((prev) => ({ ...prev, ...newImages }));
+      toast.success(`Generated QR codes for ${qrCodes.length} tables`);
+    } catch (err) {
+      toast.error(err.message || 'Failed to generate all QR codes');
+    } finally {
+      setIsGeneratingAll(false);
+    }
+  };
+
   const handleDownload = async (tableId, tableNumber) => {
     try {
       const blob = await downloadQR(tableId);
@@ -42,11 +63,28 @@ export default function QRManagementPage() {
     }
   };
 
+  const handleViewAnalytics = async (tableId) => {
+    try {
+      const res = await getQRAnalytics(tableId);
+      setAnalytics((prev) => ({ ...prev, [tableId]: res.data }));
+    } catch (err) {
+      toast.error(err.message || 'Failed to load analytics');
+    }
+  };
+
   if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
 
   return (
     <div>
-      <PageHeader title="QR Code Management" subtitle="Generate and download QR codes for tables" />
+      <PageHeader
+        title="QR Code Management"
+        subtitle="Generate and download QR codes for tables"
+        actions={
+          <Button onClick={handleGenerateAll} isLoading={isGeneratingAll}>
+            <QrCode className="w-4 h-4 mr-1" /> Generate All
+          </Button>
+        }
+      />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {tables.map((table) => (
           <div key={table._id} className="card text-center">
@@ -69,7 +107,19 @@ export default function QRManagementPage() {
               <button onClick={() => handleDownload(table._id, table.tableNumber)} className="btn-primary text-sm px-3 py-1.5 flex items-center gap-1">
                 <Download className="w-3.5 h-3.5" /> Download
               </button>
+              <button onClick={() => handleViewAnalytics(table._id)} className="btn-secondary text-sm px-3 py-1.5 flex items-center gap-1">
+                <BarChart3 className="w-3.5 h-3.5" />
+              </button>
             </div>
+            {analytics[table._id] && (
+              <div className="mt-3 pt-3 border-t border-[#E5E5E5] text-xs text-gray-600 space-y-1">
+                <div className="flex justify-between"><span>Total Scans</span><span className="font-medium">{analytics[table._id].totalScans ?? 0}</span></div>
+                <div className="flex justify-between"><span>Orders via QR</span><span className="font-medium">{analytics[table._id].totalOrders ?? 0}</span></div>
+                {analytics[table._id].lastScanned && (
+                  <div className="flex justify-between"><span>Last Scanned</span><span className="font-medium">{new Date(analytics[table._id].lastScanned).toLocaleDateString()}</span></div>
+                )}
+              </div>
+            )}
           </div>
         ))}
       </div>

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { Plus } from 'lucide-react';
-import { getPublicMenu, updateMenuAvailability, deleteMenuItem } from '../../api/menu';
+import { getAllMenuItems, updateMenuAvailability, deleteMenuItem } from '../../api/menu';
 import { getCategories } from '../../api/categories';
 import useAuth from '../../hooks/useAuth';
 import PageHeader from '../../components/shared/PageHeader';
@@ -34,7 +34,7 @@ export default function MenuListPage() {
       const params = { page, limit: 20 };
       if (search) params.search = search;
       if (category) params.category = category;
-      const res = await getPublicMenu(params);
+      const res = await getAllMenuItems(params);
       setItems(res.data || []);
       setPagination(res.pagination || {});
     } catch (err) {

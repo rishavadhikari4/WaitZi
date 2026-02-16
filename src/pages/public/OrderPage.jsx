@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { ShoppingCart, Plus, Minus, Search } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Search, MapPin } from 'lucide-react';
 import { getOrderingPageData, getOrderingPageByNumber } from '../../api/qr';
 import useCart from '../../hooks/useCart';
 import Spinner from '../../components/ui/Spinner';
@@ -27,9 +27,6 @@ export default function OrderPage() {
           : await getOrderingPageByNumber(tableNumber);
         const resData = res.data;
 
-        // Backend returns menu as array of categories with nested items:
-        // [{ _id, name, items: [menuItem, ...] }, ...]
-        // Flatten into separate categories and menuItems arrays
         const categories = (resData.menu || []).map(({ items, ...cat }) => cat);
         const menuItems = (resData.menu || []).flatMap((cat) =>
           (cat.items || []).map((item) => ({
@@ -51,14 +48,23 @@ export default function OrderPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-20">
-        <Spinner size="lg" />
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <Spinner size="lg" className="text-blue-500" />
+        <p className="text-sm text-blue-400">Loading menu...</p>
       </div>
     );
   }
 
   if (!data) {
-    return <p className="text-center py-20 text-gray-500">Could not load menu data.</p>;
+    return (
+      <div className="text-center py-20">
+        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <MapPin className="w-8 h-8 text-blue-400" />
+        </div>
+        <p className="text-gray-500">Could not load menu data.</p>
+        <p className="text-sm text-gray-400 mt-1">Please scan the QR code again.</p>
+      </div>
+    );
   }
 
   const filteredItems = (data.menuItems || []).filter((item) => {
@@ -74,27 +80,35 @@ export default function OrderPage() {
   };
 
   return (
-    <div className="pb-24">
-      <div className="text-center mb-4">
-        <p className="text-sm text-gray-500">Table {tableNumber}</p>
+    <div className="pb-28">
+      {/* Table badge */}
+      <div className="flex items-center justify-center mb-5">
+        <div className="inline-flex items-center gap-1.5 bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-sm font-medium">
+          <MapPin className="w-3.5 h-3.5" />
+          Table {tableNumber}
+        </div>
       </div>
 
+      {/* Search bar */}
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-400" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search menu..."
-          className="input pl-10"
+          className="w-full pl-10 pr-4 py-2.5 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-sm placeholder:text-blue-300 shadow-sm"
         />
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-hide">
+      {/* Category pills */}
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-5 scrollbar-hide">
         <button
           onClick={() => setActiveCategory('all')}
-          className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap ${
-            activeCategory === 'all' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'
+          className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap font-medium transition-all ${
+            activeCategory === 'all'
+              ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
+              : 'bg-white text-blue-600 border border-blue-200 hover:bg-blue-50'
           }`}
         >
           All
@@ -103,8 +117,10 @@ export default function OrderPage() {
           <button
             key={cat._id}
             onClick={() => setActiveCategory(cat._id)}
-            className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap ${
-              activeCategory === cat._id ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'
+            className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap font-medium transition-all ${
+              activeCategory === cat._id
+                ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
+                : 'bg-white text-blue-600 border border-blue-200 hover:bg-blue-50'
             }`}
           >
             {cat.name}
@@ -112,29 +128,44 @@ export default function OrderPage() {
         ))}
       </div>
 
+      {/* Menu items */}
       {filteredItems.length === 0 ? (
-        <p className="text-center text-gray-400 py-10">No items found</p>
+        <div className="text-center py-12">
+          <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3">
+            <Search className="w-6 h-6 text-blue-300" />
+          </div>
+          <p className="text-gray-400 text-sm">No items found</p>
+        </div>
       ) : (
         <div className="space-y-3">
           {filteredItems.map((item) => {
             const qty = getCartQty(item._id);
             return (
-              <div key={item._id} className="flex gap-3 border border-[#E5E5E5] rounded-xl p-3">
-                {item.image && (
-                  <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg flex-shrink-0" />
+              <div
+                key={item._id}
+                className={`flex gap-3 bg-white rounded-2xl p-3 shadow-sm transition-all ${
+                  qty > 0 ? 'border-2 border-blue-400 shadow-blue-100' : 'border border-blue-100'
+                }`}
+              >
+                {item.image ? (
+                  <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-xl flex-shrink-0" />
+                ) : (
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl flex-shrink-0 flex items-center justify-center">
+                    <span className="text-2xl">🍽️</span>
+                  </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-sm">{item.name}</h3>
+                  <h3 className="font-semibold text-sm text-gray-800">{item.name}</h3>
                   {item.description && (
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{item.description}</p>
+                    <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{item.description}</p>
                   )}
-                  <p className="font-semibold text-sm mt-1">{formatCurrency(item.price)}</p>
+                  <p className="font-bold text-blue-600 text-sm mt-1.5">{formatCurrency(item.price)}</p>
                 </div>
                 <div className="flex items-end flex-shrink-0">
                   {qty === 0 ? (
                     <button
                       onClick={() => cart.addItem(item)}
-                      className="bg-black text-white px-3 py-1.5 rounded-lg text-sm font-medium"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-xl text-sm font-medium transition-colors shadow-sm shadow-blue-200"
                     >
                       Add
                     </button>
@@ -142,14 +173,14 @@ export default function OrderPage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => cart.updateQuantity(item._id, qty - 1)}
-                        className="w-7 h-7 rounded-full border border-[#E5E5E5] flex items-center justify-center"
+                        className="w-8 h-8 rounded-full border-2 border-blue-200 text-blue-600 flex items-center justify-center hover:bg-blue-50 transition-colors"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="text-sm font-medium w-4 text-center">{qty}</span>
+                      <span className="text-sm font-bold text-blue-700 w-5 text-center">{qty}</span>
                       <button
                         onClick={() => cart.updateQuantity(item._id, qty + 1)}
-                        className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center"
+                        className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors shadow-sm"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -162,14 +193,22 @@ export default function OrderPage() {
         </div>
       )}
 
+      {/* Floating cart bar */}
       {cart.itemCount > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E5E5] p-4 shadow-lg">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent pt-8">
           <button
             onClick={() => navigate(`/order/table/${tableNumber}/cart`)}
-            className="w-full bg-black text-white py-3 rounded-xl font-medium flex items-center justify-center gap-2"
+            className="w-full max-w-lg mx-auto block bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-3.5 rounded-2xl font-semibold shadow-lg shadow-blue-300/40 transition-all active:scale-[0.98]"
           >
-            <ShoppingCart className="w-5 h-5" />
-            View Cart ({cart.itemCount}) - {formatCurrency(cart.total)}
+            <span className="flex items-center justify-center gap-2.5">
+              <span className="relative">
+                <ShoppingCart className="w-5 h-5" />
+                <span className="absolute -top-2 -right-2.5 w-4.5 h-4.5 bg-white text-blue-600 text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                  {cart.itemCount}
+                </span>
+              </span>
+              View Cart - {formatCurrency(cart.total)}
+            </span>
           </button>
         </div>
       )}

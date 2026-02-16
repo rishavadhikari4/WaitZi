@@ -18,3 +18,7 @@ export const updateOrderItemStatus = (orderId, itemId, data) =>
 export const addItemsToOrder = (id, data) => api.post(`/orders/${id}/items`, data);
 
 export const cancelOrder = (id, data) => api.patch(`/orders/${id}/cancel`, data);
+
+export const completeOrder = (id) => api.patch(`/orders/${id}/complete`);
+
+export const getStaffOrdersByTable = (tableId) => api.get(`/orders/table/${tableId}`);

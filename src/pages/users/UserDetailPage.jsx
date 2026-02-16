@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getUser, updateUserStatus, deleteUser } from '../../api/users';
+import { generateTempPassword } from '../../api/password';
 import useAuth from '../../hooks/useAuth';
 import PageHeader from '../../components/shared/PageHeader';
 import Badge from '../../components/ui/Badge';
@@ -19,6 +20,8 @@ export default function UserDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showDelete, setShowDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [tempPassword, setTempPassword] = useState(null);
+  const [isGeneratingPassword, setIsGeneratingPassword] = useState(false);
 
   const fetchUser = async () => {
     try {
@@ -41,6 +44,19 @@ export default function UserDetailPage() {
       fetchUser();
     } catch (err) {
       toast.error(err.message || 'Failed to update');
+    }
+  };
+
+  const handleGenerateTempPassword = async () => {
+    setIsGeneratingPassword(true);
+    try {
+      const res = await generateTempPassword(id);
+      setTempPassword(res.data?.temporaryPassword || res.data?.password);
+      toast.success('Temporary password generated');
+    } catch (err) {
+      toast.error(err.message || 'Failed to generate password');
+    } finally {
+      setIsGeneratingPassword(false);
     }
   };
 
@@ -70,9 +86,14 @@ export default function UserDetailPage() {
               {user.status === 'Active' ? 'Deactivate' : 'Activate'}
             </Button>
             {isAdmin && user.role?.name !== 'admin' && (
-              <Button variant="danger" onClick={() => setShowDelete(true)}>
-                Delete
-              </Button>
+              <>
+                <Button variant="secondary" onClick={handleGenerateTempPassword} isLoading={isGeneratingPassword}>
+                  Temp Password
+                </Button>
+                <Button variant="danger" onClick={() => setShowDelete(true)}>
+                  Delete
+                </Button>
+              </>
             )}
           </div>
         }
@@ -99,6 +120,22 @@ export default function UserDetailPage() {
           <div><span className="text-gray-500">Joined</span><p className="font-medium mt-1">{formatDateTime(user.createdAt)}</p></div>
         </div>
       </div>
+
+      {tempPassword && (
+        <div className="card mt-6 border-2 border-green-200 bg-green-50">
+          <h3 className="font-semibold mb-2">Temporary Password Generated</h3>
+          <p className="text-sm text-gray-600 mb-2">Share this password with the user. They will be required to change it on first login.</p>
+          <div className="flex items-center gap-2">
+            <code className="bg-white px-3 py-2 rounded border border-green-300 font-mono text-sm flex-1">{tempPassword}</code>
+            <Button
+              variant="secondary"
+              onClick={() => { navigator.clipboard.writeText(tempPassword); toast.success('Copied to clipboard'); }}
+            >
+              Copy
+            </Button>
+          </div>
+        </div>
+      )}
 
       <ConfirmDialog
         isOpen={showDelete}

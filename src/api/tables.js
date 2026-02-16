@@ -19,3 +19,5 @@ export const getTable = (id) => api.get(`/tables/${id}`);
 export const updateTable = (id, data) => api.put(`/tables/${id}`, data);
 
 export const deleteTable = (id) => api.delete(`/tables/${id}`);
+
+export const getTableByNumber = (tableNumber) => api.get(`/tables/number/${tableNumber}`);
