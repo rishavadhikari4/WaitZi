@@ -8,6 +8,25 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// In-memory token storage (survives page navigation but not refresh - cookies handle that)
+let accessToken = null;
+
+export const setAccessToken = (token) => {
+  accessToken = token;
+};
+
+export const clearAccessToken = () => {
+  accessToken = null;
+};
+
+// Request interceptor: attach Authorization header as fallback alongside cookies
+api.interceptors.request.use((config) => {
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
+});
+
 let isRefreshing = false;
 let failedQueue = [];
 
@@ -47,22 +66,24 @@ api.interceptors.response.use(
 
       try {
         const baseURL = import.meta.env.VITE_API_BASE_URL || '/api';
-        console.log('Attempting token refresh...');
-        await axios.post(
+        const refreshResponse = await axios.post(
           `${baseURL}/auth/refresh-token`,
           {},
           { withCredentials: true }
         );
-        console.log('Token refresh successful');
+
+        // Store the new access token from response for Authorization header fallback
+        const newAccessToken = refreshResponse.data?.data?.accessToken;
+        if (newAccessToken) {
+          setAccessToken(newAccessToken);
+        }
+
         processQueue(null);
         return api(originalRequest);
       } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError.response?.status, refreshError.response?.data);
         processQueue(refreshError);
-        
-        // Use centralized authentication error handling
+        clearAccessToken();
         handleAuthenticationError(refreshError);
-        
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

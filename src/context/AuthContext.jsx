@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 import * as authApi from '../api/auth';
+import { setAccessToken, clearAccessToken } from '../api/axios';
 
 export const AuthContext = createContext(null);
 
@@ -12,7 +13,11 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (email, password) => {
     const response = await authApi.login({ email, password });
-    const { user: userData, mustChangePassword: mustChange } = response.data;
+    const { user: userData, accessToken, mustChangePassword: mustChange } = response.data;
+    // Store access token in memory for Authorization header fallback
+    if (accessToken) {
+      setAccessToken(accessToken);
+    }
     setUser(userData);
     setMustChangePassword(mustChange || false);
     return { user: userData, mustChangePassword: mustChange };
@@ -24,6 +29,7 @@ export function AuthProvider({ children }) {
     } catch {
       // Ignore logout errors
     } finally {
+      clearAccessToken();
       setUser(null);
       setMustChangePassword(false);
       // Clear any cached authentication data
