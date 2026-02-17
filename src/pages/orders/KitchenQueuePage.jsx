@@ -1,8 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { Clock, ChefHat, CheckCircle2 } from 'lucide-react';
 import { getKitchenQueue, updateOrderItemStatus } from '../../api/orders';
 import usePolling from '../../hooks/usePolling';
+import useSocket from '../../hooks/useSocket';
 import PageHeader from '../../components/shared/PageHeader';
 import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
@@ -10,7 +11,18 @@ import { formatTime } from '../../utils/formatters';
 
 export default function KitchenQueuePage() {
   const fetchQueue = useCallback(() => getKitchenQueue(), []);
-  const { data, isLoading, refresh } = usePolling(fetchQueue, 10000);
+  const { data, isLoading, refresh } = usePolling(fetchQueue, 30000);
+
+  // Socket.IO for instant kitchen updates
+  const socketRooms = useMemo(() => ['kitchen'], []);
+  const socketEvents = useMemo(() => ({
+    'order:new': () => refresh(),
+    'order:status-updated': () => refresh(),
+    'order:item-updated': () => refresh(),
+    'order:cancelled': () => refresh(),
+    'order:items-added': () => refresh(),
+  }), [refresh]);
+  useSocket(socketRooms, socketEvents);
 
   const handleItemStatus = async (orderId, itemId, newStatus) => {
     try {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ClipboardList, UtensilsCrossed, Clock, CheckCircle2 } from 'lucide-react';
@@ -7,6 +7,7 @@ import { getAllTables } from '../../api/tables';
 import { getRealTimeStatus } from '../../api/dashboard';
 import useAuth from '../../hooks/useAuth';
 import usePolling from '../../hooks/usePolling';
+import useSocket from '../../hooks/useSocket';
 import PageHeader from '../../components/shared/PageHeader';
 import StatsCard from '../../components/shared/StatsCard';
 import Badge from '../../components/ui/Badge';
@@ -20,7 +21,7 @@ export default function WaiterDashboard() {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { data: realTime } = usePolling(() => getRealTimeStatus(), 15000);
+  const { data: realTime, refresh: refreshRealTime } = usePolling(() => getRealTimeStatus(), 30000);
   const rtData = realTime?.data || {};
 
   const fetchData = useCallback(async () => {
@@ -40,8 +41,18 @@ export default function WaiterDashboard() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // Poll for fresh orders every 15s
-  usePolling(fetchData, 15000);
+  // Slower polling as fallback; socket handles real-time
+  usePolling(fetchData, 30000);
+
+  // Socket.IO for instant dashboard updates
+  const socketRooms = useMemo(() => ['dashboard'], []);
+  const socketEvents = useMemo(() => ({
+    'order:new': () => { fetchData(); refreshRealTime(); },
+    'order:status-updated': () => { fetchData(); refreshRealTime(); },
+    'order:paid': () => { fetchData(); refreshRealTime(); },
+    'order:cancelled': () => { fetchData(); refreshRealTime(); },
+  }), [fetchData, refreshRealTime]);
+  useSocket(socketRooms, socketEvents);
 
   if (isLoading) {
     return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;

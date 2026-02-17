@@ -17,6 +17,7 @@ import OrderPage from '../pages/public/OrderPage';
 import CartPage from '../pages/public/CartPage';
 import OrderConfirmation from '../pages/public/OrderConfirmation';
 import OrderTracking from '../pages/public/OrderTracking';
+import PaymentResult from '../pages/public/PaymentResult';
 
 // Dashboard pages
 import DashboardRouter from '../pages/dashboard/DashboardRouter';
@@ -78,6 +79,8 @@ export default function AppRoutes() {
         <Route path="/order/table/:tableNumber/cart" element={<CartPage />} />
         <Route path="/order/table/:tableNumber/confirm" element={<OrderConfirmation />} />
         <Route path="/order/table/:tableNumber/track" element={<OrderTracking />} />
+        <Route path="/order/table/:tableNumber/payment-result" element={<PaymentResult />} />
+        <Route path="/order/payment-result" element={<PaymentResult />} />
       </Route>
 
       {/* Dashboard routes (protected) */}

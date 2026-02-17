@@ -1,13 +1,27 @@
+import { useMemo } from 'react';
 import { ShoppingBag, Clock, ChefHat, UtensilsCrossed, DollarSign, Users } from 'lucide-react';
 import { getRealTimeStatus } from '../../api/dashboard';
 import usePolling from '../../hooks/usePolling';
+import useSocket from '../../hooks/useSocket';
 import StatsCard from '../../components/shared/StatsCard';
 import PageHeader from '../../components/shared/PageHeader';
 import Spinner from '../../components/ui/Spinner';
 import { formatCurrency, formatDateTime } from '../../utils/formatters';
 
 export default function RealTimePage() {
-  const { data, isLoading } = usePolling(() => getRealTimeStatus(), 10000);
+  const { data, isLoading, refresh } = usePolling(() => getRealTimeStatus(), 30000);
+
+  // Socket.IO for instant dashboard updates
+  const socketRooms = useMemo(() => ['dashboard'], []);
+  const socketEvents = useMemo(() => ({
+    'order:new': () => refresh(),
+    'order:status-updated': () => refresh(),
+    'order:item-updated': () => refresh(),
+    'order:paid': () => refresh(),
+    'order:cancelled': () => refresh(),
+    'order:items-added': () => refresh(),
+  }), [refresh]);
+  useSocket(socketRooms, socketEvents);
 
   if (isLoading) {
     return (

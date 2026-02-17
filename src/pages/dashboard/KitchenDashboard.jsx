@@ -1,10 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { Clock, ChefHat, CheckCircle2, Flame } from 'lucide-react';
 import { getKitchenQueue, updateOrderItemStatus } from '../../api/orders';
 import { getRealTimeStatus } from '../../api/dashboard';
 import useAuth from '../../hooks/useAuth';
 import usePolling from '../../hooks/usePolling';
+import useSocket from '../../hooks/useSocket';
 import PageHeader from '../../components/shared/PageHeader';
 import StatsCard from '../../components/shared/StatsCard';
 import Badge from '../../components/ui/Badge';
@@ -17,8 +18,20 @@ export default function KitchenDashboard() {
   const roleLabel = isChef ? 'Chef' : 'Kitchen Helper';
 
   const fetchQueue = useCallback(() => getKitchenQueue(), []);
-  const { data: queueData, isLoading: queueLoading, refresh } = usePolling(fetchQueue, 8000);
-  const { data: realTime } = usePolling(() => getRealTimeStatus(), 15000);
+  const { data: queueData, isLoading: queueLoading, refresh } = usePolling(fetchQueue, 30000);
+  const { data: realTime, refresh: refreshRealTime } = usePolling(() => getRealTimeStatus(), 30000);
+
+  // Socket.IO for instant kitchen + dashboard updates
+  const socketRooms = useMemo(() => ['kitchen', 'dashboard'], []);
+  const socketEvents = useMemo(() => ({
+    'order:new': () => { refresh(); refreshRealTime(); },
+    'order:status-updated': () => { refresh(); refreshRealTime(); },
+    'order:item-updated': () => { refresh(); refreshRealTime(); },
+    'order:cancelled': () => { refresh(); refreshRealTime(); },
+    'order:items-added': () => { refresh(); refreshRealTime(); },
+    'order:paid': () => refreshRealTime(),
+  }), [refresh, refreshRealTime]);
+  useSocket(socketRooms, socketEvents);
 
   const orders = queueData?.data || [];
   const rtData = realTime?.data || {};

@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getOrder, updateOrderStatus, updateOrderItemStatus, cancelOrder } from '../../api/orders';
+import useSocket from '../../hooks/useSocket';
 import PageHeader from '../../components/shared/PageHeader';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
@@ -19,7 +20,7 @@ export default function OrderDetailPage() {
   const [showCancel, setShowCancel] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
 
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     try {
       const res = await getOrder(id);
       setOrder(res.data);
@@ -28,9 +29,20 @@ export default function OrderDetailPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [id]);
 
-  useEffect(() => { fetchOrder(); }, [id]);
+  useEffect(() => { fetchOrder(); }, [fetchOrder]);
+
+  // Socket.IO for instant order updates
+  const socketRooms = useMemo(() => id ? [`order:${id}`] : [], [id]);
+  const socketEvents = useMemo(() => ({
+    'order:status-updated': () => fetchOrder(),
+    'order:item-updated': () => fetchOrder(),
+    'order:paid': () => fetchOrder(),
+    'order:cancelled': () => fetchOrder(),
+    'order:items-added': () => fetchOrder(),
+  }), [fetchOrder]);
+  useSocket(socketRooms, socketEvents);
 
   const handleStatusChange = async (newStatus) => {
     try {

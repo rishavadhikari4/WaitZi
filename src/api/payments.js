@@ -13,3 +13,5 @@ export const updatePaymentStatus = (id, data) => api.patch(`/payments/${id}/stat
 export const processRefund = (id, data) => api.post(`/payments/${id}/refund`, data);
 
 export const getDailySales = (params) => api.get('/payments/reports/daily', { params });
+
+export const initiateKhaltiPayment = (orderId) => api.post('/payments/khalti/initiate', { orderId });

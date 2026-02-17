@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
-import { Clock, ChefHat, UtensilsCrossed, MapPin, Plus } from 'lucide-react';
+import { Clock, ChefHat, UtensilsCrossed, MapPin, Plus, Banknote, Wallet } from 'lucide-react';
 import { getOrdersByTable } from '../../api/orders';
+import { initiateKhaltiPayment } from '../../api/payments';
 import { getOrderingPageByNumber } from '../../api/qr';
 import usePolling from '../../hooks/usePolling';
+import useSocket from '../../hooks/useSocket';
 import useCart from '../../hooks/useCart';
 import Spinner from '../../components/ui/Spinner';
 import { formatCurrency, formatTime } from '../../utils/formatters';
@@ -27,6 +29,68 @@ const statusLabels = {
   Cancelled: { text: 'Cancelled', bg: 'bg-red-100', fg: 'text-red-700' },
 };
 
+function PaymentSection({ order, tableNumber }) {
+  const [showCashMsg, setShowCashMsg] = useState(false);
+  const [isKhaltiLoading, setIsKhaltiLoading] = useState(false);
+  const [khaltiError, setKhaltiError] = useState('');
+
+  const handleKhaltiPay = async () => {
+    setIsKhaltiLoading(true);
+    setKhaltiError('');
+    try {
+      const res = await initiateKhaltiPayment(order._id);
+      const paymentUrl = res.data?.payment_url;
+      if (paymentUrl) {
+        window.location.href = paymentUrl;
+      } else {
+        setKhaltiError('Could not get payment URL. Please try again.');
+      }
+    } catch (err) {
+      setKhaltiError(err.message || 'Failed to initiate Khalti payment');
+    } finally {
+      setIsKhaltiLoading(false);
+    }
+  };
+
+  return (
+    <div className="px-4 pb-4 pt-1">
+      <div className="border-t border-blue-100 pt-3">
+        <p className="text-xs text-gray-500 font-medium mb-2.5 text-center">How would you like to pay?</p>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowCashMsg(!showCashMsg)}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-semibold transition-colors"
+          >
+            <Banknote className="w-4 h-4" /> Cash
+          </button>
+          <button
+            onClick={handleKhaltiPay}
+            disabled={isKhaltiLoading}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition-colors shadow-sm disabled:opacity-60"
+          >
+            {isKhaltiLoading ? (
+              <Spinner size="sm" className="text-white" />
+            ) : (
+              <Wallet className="w-4 h-4" />
+            )}
+            Khalti
+          </button>
+        </div>
+        {showCashMsg && (
+          <p className="text-xs text-center text-amber-600 bg-amber-50 rounded-lg py-2 mt-2">
+            Please ask your waiter to process the cash payment.
+          </p>
+        )}
+        {khaltiError && (
+          <p className="text-xs text-center text-red-600 bg-red-50 rounded-lg py-2 mt-2">
+            {khaltiError}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function OrderTracking() {
   const { tableNumber } = useParams();
   const [searchParams] = useSearchParams();
@@ -44,11 +108,26 @@ export default function OrderTracking() {
       .catch(() => {});
   }, [tableNumber, resolvedTableId]);
 
-  const { data, isLoading } = usePolling(
+  const { data, isLoading, refresh } = usePolling(
     () => resolvedTableId ? getOrdersByTable(resolvedTableId) : Promise.resolve(null),
-    15000,
+    30000, // Slower polling as fallback; socket handles real-time
     !!resolvedTableId
   );
+
+  // Socket.IO for instant updates
+  const socketRooms = useMemo(
+    () => resolvedTableId ? [`table:${resolvedTableId}`] : [],
+    [resolvedTableId]
+  );
+  const socketEvents = useMemo(() => ({
+    'order:new': () => refresh(),
+    'order:status-updated': () => refresh(),
+    'order:item-updated': () => refresh(),
+    'order:paid': () => refresh(),
+    'order:cancelled': () => refresh(),
+    'order:items-added': () => refresh(),
+  }), [refresh]);
+  useSocket(socketRooms, socketEvents);
 
   if (isLoading) {
     return (
@@ -99,6 +178,7 @@ export default function OrderTracking() {
       {orders.map((order) => {
         const step = statusIndex[order.status] ?? 0;
         const label = statusLabels[order.status] || statusLabels.Pending;
+        const showPayment = order.status === 'Served';
 
         return (
           <div key={order._id} className="bg-white border border-blue-100 rounded-2xl overflow-hidden shadow-sm">
@@ -170,6 +250,9 @@ export default function OrderTracking() {
                 <span className="font-bold text-blue-600">{formatCurrency(order.finalAmount || order.totalAmount)}</span>
               </div>
             </div>
+
+            {/* Payment section - only shown when order is Served */}
+            {showPayment && <PaymentSection order={order} tableNumber={tableNumber} />}
           </div>
         );
       })}
