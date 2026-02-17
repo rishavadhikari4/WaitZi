@@ -11,7 +11,7 @@ import Button from '../../components/ui/Button';
 export default function UserFormPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    firstName: '', lastName: '', email: '', password: '', number: '', address: '', role: '',
+    firstName: '', lastName: '', email: '', password: '', confirmPassword: '', number: '', address: '', role: '',
   });
   const [roles, setRoles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +24,19 @@ export default function UserFormPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Password confirmation validation
+    if (form.password !== form.confirmPassword) {
+      toast.error('Password confirmation does not match password');
+      return;
+    }
+
+    // Nepali phone number validation
+    if (form.number && !/^(\+977)?9[0-9]{8}$/.test(form.number.replace(/\s/g, ''))) {
+      toast.error('Valid Nepali phone number is required (e.g. 98XXXXXXXX or +97798XXXXXXXX)');
+      return;
+    }
+
     setIsLoading(true);
     try {
       await register({
@@ -51,7 +64,8 @@ export default function UserFormPage() {
         </div>
         <Input label="Email" type="email" value={form.email} onChange={set('email')} required />
         <Input label="Password" type="password" value={form.password} onChange={set('password')} required />
-        <Input label="Phone" value={form.number} onChange={set('number')} />
+        <Input label="Confirm Password" type="password" value={form.confirmPassword} onChange={set('confirmPassword')} required />
+        <Input label="Phone" value={form.number} onChange={set('number')} placeholder="e.g. 9876543210 or +9779876543210" />
         <Input label="Address" value={form.address} onChange={set('address')} />
         <Select
           label="Role"
