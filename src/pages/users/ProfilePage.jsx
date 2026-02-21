@@ -8,6 +8,9 @@ import Button from '../../components/ui/Button';
 import FileUpload from '../../components/shared/FileUpload';
 import Spinner from '../../components/ui/Spinner';
 
+const LETTERS_ONLY = /^[a-zA-Z\s]+$/;
+const PHONE_RE = /^(\+977)?9[78]\d{8}$/;
+
 export default function ProfilePage() {
   const { setUser } = useAuth();
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', number: '', address: '' });
@@ -15,25 +18,46 @@ export default function ProfilePage() {
   const [existingImage, setExistingImage] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    console.log('ProfilePage: Loading profile data...');
     getProfile()
       .then((res) => {
-        console.log('ProfilePage: Profile data loaded successfully:', res.data);
         const u = res.data;
         setForm({ firstName: u.firstName || '', lastName: u.lastName || '', email: u.email || '', number: u.number || '', address: u.address || '' });
         setExistingImage(u.image);
       })
-      .catch((err) => {
-        console.error('ProfilePage: Failed to load profile:', err.message, err.status);
-        toast.error(err.message || 'Failed to load profile');
-      })
+      .catch((err) => toast.error(err.message || 'Failed to load profile'))
       .finally(() => setIsLoading(false));
   }, []);
 
+  const validate = () => {
+    const errs = {};
+    if (!form.firstName.trim()) errs.firstName = 'First name is required';
+    else if (form.firstName.trim().length < 2) errs.firstName = 'First name must be at least 2 characters';
+    else if (!LETTERS_ONLY.test(form.firstName)) errs.firstName = 'First name must contain only letters';
+
+    if (!form.lastName.trim()) errs.lastName = 'Last name is required';
+    else if (form.lastName.trim().length < 2) errs.lastName = 'Last name must be at least 2 characters';
+    else if (!LETTERS_ONLY.test(form.lastName)) errs.lastName = 'Last name must contain only letters';
+
+    if (form.number && !PHONE_RE.test(form.number.replace(/\s/g, '')))
+      errs.number = 'Enter a valid Nepali number (e.g. 9812345678 or +9779812345678)';
+
+    if (form.address && form.address.trim().length > 0 && form.address.trim().length < 5)
+      errs.address = 'Address must be at least 5 characters';
+
+    return errs;
+  };
+
+  const clearError = (field) => setErrors((p) => ({ ...p, [field]: '' }));
+  const set = (field) => (e) => { setForm({ ...form, [field]: e.target.value }); clearError(field); };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
     setIsSaving(true);
     try {
       const formData = new FormData();
@@ -51,20 +75,18 @@ export default function ProfilePage() {
 
   if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
 
-  const set = (field) => (e) => setForm({ ...form, [field]: e.target.value });
-
   return (
     <div className="max-w-2xl">
       <PageHeader title="My Profile" />
       <form onSubmit={handleSubmit} className="card space-y-4">
         <FileUpload label="Profile Photo" onChange={setImage} preview={existingImage} />
         <div className="grid grid-cols-2 gap-4">
-          <Input label="First Name" value={form.firstName} onChange={set('firstName')} required />
-          <Input label="Last Name" value={form.lastName} onChange={set('lastName')} required />
+          <Input label="First Name" value={form.firstName} onChange={set('firstName')} error={errors.firstName} placeholder="e.g. Ram" />
+          <Input label="Last Name" value={form.lastName} onChange={set('lastName')} error={errors.lastName} placeholder="e.g. Sharma" />
         </div>
-        <Input label="Email" type="email" value={form.email} onChange={set('email')} required />
-        <Input label="Phone" value={form.number} onChange={set('number')} />
-        <Input label="Address" value={form.address} onChange={set('address')} />
+        <Input label="Email" type="email" value={form.email} onChange={set('email')} disabled />
+        <Input label="Phone" value={form.number} onChange={set('number')} error={errors.number} placeholder="e.g. 9812345678" />
+        <Input label="Address" value={form.address} onChange={set('address')} error={errors.address} placeholder="e.g. Kathmandu, Nepal" />
         <Button type="submit" isLoading={isSaving}>Save Changes</Button>
       </form>
     </div>

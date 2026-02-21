@@ -5,6 +5,7 @@ const apiBase = import.meta.env.VITE_API_BASE_URL || '';
 const socketUrl = apiBase.replace(/\/api\/?$/, '') || undefined;
 
 const socket = io(socketUrl, {
+  transports: ['websocket', 'polling'],
   autoConnect: true,
   reconnection: true,
   reconnectionAttempts: Infinity,

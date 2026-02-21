@@ -7,6 +7,32 @@ import useAuth from '../../hooks/useAuth';
 import Button from '../../components/ui/Button';
 import PageHeader from '../../components/shared/PageHeader';
 
+// Defined OUTSIDE the page component so React keeps it stable across renders
+function PasswordField({ label, field, value, showKey, showState, onShowToggle, onChange, error, placeholder }) {
+  return (
+    <div className="space-y-1">
+      <label className="block text-sm font-medium text-slate-700">{label}</label>
+      <div className="relative">
+        <input
+          type={showState ? 'text' : 'password'}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`input w-full pr-10 ${error ? 'border-red-500 focus:ring-red-500' : ''}`}
+        />
+        <button
+          type="button"
+          onClick={onShowToggle}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+        >
+          {showState ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
+      {error && <p className="text-sm text-red-600">{error}</p>}
+    </div>
+  );
+}
+
 export default function ChangePasswordPage() {
   const navigate = useNavigate();
   const { mustChangePassword, setMustChangePassword } = useAuth();
@@ -43,31 +69,7 @@ export default function ChangePasswordPage() {
     }
   };
 
-  const PasswordField = ({ label, field, showKey, placeholder }) => (
-    <div className="space-y-1">
-      <label className="block text-sm font-medium text-slate-700">{label}</label>
-      <div className="relative">
-        <input
-          type={show[showKey] ? 'text' : 'password'}
-          value={form[field]}
-          onChange={(e) => {
-            setForm((p) => ({ ...p, [field]: e.target.value }));
-            if (errors[field]) setErrors((p) => ({ ...p, [field]: '' }));
-          }}
-          placeholder={placeholder}
-          className={`input w-full pr-10 ${errors[field] ? 'border-red-500 focus:ring-red-500' : ''}`}
-        />
-        <button
-          type="button"
-          onClick={() => setShow((p) => ({ ...p, [showKey]: !p[showKey] }))}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
-        >
-          {show[showKey] ? <EyeOff size={18} /> : <Eye size={18} />}
-        </button>
-      </div>
-      {errors[field] && <p className="text-sm text-red-600">{errors[field]}</p>}
-    </div>
-  );
+  const clearError = (field) => setErrors((p) => ({ ...p, [field]: '' }));
 
   return (
     <div className="max-w-md mx-auto">
@@ -76,9 +78,33 @@ export default function ChangePasswordPage() {
         subtitle={mustChangePassword ? 'You must change your password before continuing' : undefined}
       />
       <form onSubmit={handleSubmit} className="card space-y-4">
-        <PasswordField label="Current Password" field="currentPassword" showKey="current" placeholder="Enter current password" />
-        <PasswordField label="New Password" field="newPassword" showKey="newPwd" placeholder="Enter new password" />
-        <PasswordField label="Confirm New Password" field="confirmPassword" showKey="confirm" placeholder="Confirm new password" />
+        <PasswordField
+          label="Current Password"
+          value={form.currentPassword}
+          showState={show.current}
+          onShowToggle={() => setShow((p) => ({ ...p, current: !p.current }))}
+          onChange={(e) => { setForm((p) => ({ ...p, currentPassword: e.target.value })); clearError('currentPassword'); }}
+          error={errors.currentPassword}
+          placeholder="Enter current password"
+        />
+        <PasswordField
+          label="New Password"
+          value={form.newPassword}
+          showState={show.newPwd}
+          onShowToggle={() => setShow((p) => ({ ...p, newPwd: !p.newPwd }))}
+          onChange={(e) => { setForm((p) => ({ ...p, newPassword: e.target.value })); clearError('newPassword'); }}
+          error={errors.newPassword}
+          placeholder="Enter new password"
+        />
+        <PasswordField
+          label="Confirm New Password"
+          value={form.confirmPassword}
+          showState={show.confirm}
+          onShowToggle={() => setShow((p) => ({ ...p, confirm: !p.confirm }))}
+          onChange={(e) => { setForm((p) => ({ ...p, confirmPassword: e.target.value })); clearError('confirmPassword'); }}
+          error={errors.confirmPassword}
+          placeholder="Confirm new password"
+        />
         <Button type="submit" isLoading={isLoading} className="w-full">
           Update Password
         </Button>

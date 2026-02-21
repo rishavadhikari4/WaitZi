@@ -66,9 +66,35 @@ export default function OverviewPage() {
     fetchData();
   }, [period, activeTab]);
 
-  const stats = data?.stats || data?.overview?.orders || data || {};
-  const salesTrends = data?.analytics?.salesTrends || data?.salesTrends || [];
-  const popularItems = data?.analytics?.popularItems || data?.popularItems || [];
+  // Build stats merging order counts with table/staff from operations
+  const orderStats = data?.overview?.orders || {};
+  const stats = {
+    ...orderStats,
+    occupiedTables: data?.operations?.tableStatus?.byStatus?.occupied ?? orderStats.occupiedTables ?? 0,
+    staffOnDuty: data?.operations?.staffStats?.active ?? data?.operations?.staffStats?.total ?? 0,
+  };
+
+  // Transform salesTrends from { _id:{year,month,day,hour}, totalSales } → { date, total }
+  const salesTrends = (data?.analytics?.salesTrends || []).map((item) => {
+    const id = item._id || {};
+    let date;
+    if (id.hour !== undefined) {
+      date = `${String(id.hour).padStart(2, '0')}:00`; // hourly → HH:00
+    } else if (id.day !== undefined) {
+      date = `${String(id.month).padStart(2, '0')}/${String(id.day).padStart(2, '0')}`; // daily → MM/DD
+    } else if (id.month !== undefined) {
+      date = `${id.year}/${String(id.month).padStart(2, '0')}`; // monthly → YYYY/MM
+    } else {
+      date = String(id);
+    }
+    return { date, total: item.totalSales ?? item.total ?? 0 };
+  });
+
+  // Transform popularItems: map totalQuantity → count for chart
+  const popularItems = (data?.analytics?.popularItems || []).map((item) => ({
+    name: item.name || item.menuDetails?.[0]?.name || 'Item',
+    count: item.totalQuantity ?? item.orderCount ?? item.count ?? 0,
+  }));
 
   return (
     <div>

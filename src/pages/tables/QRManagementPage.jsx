@@ -38,7 +38,8 @@ export default function QRManagementPage() {
       const qrCodes = res.data?.qrCodes || res.data || [];
       const newImages = {};
       qrCodes.forEach((qr) => {
-        if (qr.tableId && qr.qrCode) newImages[qr.tableId] = qr.qrCode;
+        const id = qr.table?.id || qr.table?._id || qr.tableId;
+        if (id && qr.qrCode) newImages[id] = qr.qrCode;
       });
       setQrImages((prev) => ({ ...prev, ...newImages }));
       toast.success(`Generated QR codes for ${qrCodes.length} tables`);

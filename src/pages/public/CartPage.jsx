@@ -13,14 +13,11 @@ export default function CartPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handlePlaceOrder = async () => {
-    if (!cart.customerName.trim()) {
-      toast.error('Please enter your name');
-      return;
-    }
-    if (!cart.items.length) {
-      toast.error('Your cart is empty');
-      return;
-    }
+    const name = cart.customerName.trim();
+    if (!name) { toast.error('Please enter your name'); return; }
+    if (name.length < 2) { toast.error('Name must be at least 2 characters'); return; }
+    if (!/^[a-zA-Z\s]+$/.test(name)) { toast.error('Name must contain only letters'); return; }
+    if (!cart.items.length) { toast.error('Your cart is empty'); return; }
     setIsLoading(true);
     try {
       const orderData = {
@@ -97,7 +94,7 @@ export default function CartPage() {
                   </button>
                   <span className="text-sm font-bold text-indigo-700 w-5 text-center">{item.quantity}</span>
                   <button
-                    onClick={() => cart.updateQuantity(item.menuItem._id, item.quantity + 1)}
+                    onClick={() => cart.updateQuantity(item.menuItem._id, Math.min(item.quantity + 1, 20))}
                     className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 transition-colors shadow-sm"
                   >
                     <Plus className="w-3.5 h-3.5" />
@@ -112,6 +109,7 @@ export default function CartPage() {
                   value={item.notes}
                   onChange={(e) => cart.updateNotes(item.menuItem._id, e.target.value)}
                   placeholder="Add note (e.g. no onions)"
+                  maxLength={200}
                   className="w-full text-xs pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder:text-slate-400"
                 />
               </div>

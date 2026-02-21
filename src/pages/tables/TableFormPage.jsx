@@ -73,8 +73,8 @@ export default function TableFormPage() {
     <div className="max-w-md">
       <PageHeader title={isEdit ? 'Edit Table' : 'Add Table'} />
       <form onSubmit={handleSubmit} className="card space-y-4">
-        <Input label="Table Number" type="number" min="1" value={form.tableNumber} onChange={(e) => setForm({ ...form, tableNumber: e.target.value })} required />
-        <Input label="Capacity" type="number" min="1" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} required />
+        <Input label="Table Number" type="number" min="1" max="999" value={form.tableNumber} onChange={(e) => setForm({ ...form, tableNumber: e.target.value })} required />
+        <Input label="Capacity" type="number" min="1" max="20" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} required />
         <Select
           label="Assigned Waiter"
           value={form.assignedWaiter}
