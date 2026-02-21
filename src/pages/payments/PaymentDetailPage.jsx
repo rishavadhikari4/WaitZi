@@ -37,7 +37,7 @@ export default function PaymentDetailPage() {
   const handleRefund = async () => {
     setIsRefunding(true);
     try {
-      await processRefund(id, { amount: Number(refundData.amount), reason: refundData.reason, refundedBy: user?._id });
+      await processRefund(id, { refundAmount: Number(refundData.amount), reason: refundData.reason, handledBy: user?._id });
       toast.success('Refund processed');
       setShowRefund(false);
       fetchPayment();
@@ -51,7 +51,7 @@ export default function PaymentDetailPage() {
   if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
   if (!payment) return <p className="text-center py-20 text-slate-500">Payment not found</p>;
 
-  const canRefund = ['admin', 'manager'].includes(user?.role?.name) && payment.paymentStatus === 'Paid';
+  const canRefund = user?.role?.name === 'admin' && payment.paymentStatus === 'Paid';
 
   return (
     <div className="max-w-2xl">

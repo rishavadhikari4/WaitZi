@@ -1,6 +1,6 @@
 export const ORDER_STATUSES = ['Pending', 'InKitchen', 'Served', 'Cancelled', 'Paid', 'Completed'];
 export const ORDER_ITEM_STATUSES = ['Pending', 'Cooking', 'Ready', 'Served'];
-export const TABLE_STATUSES = ['Available', 'Occupied', 'Reserved', 'Cleaning'];
+export const TABLE_STATUSES = ['Available', 'Occupied', 'Reserved'];
 export const PAYMENT_METHODS = ['Cash', 'Card', 'Fonepay', 'NepalPay', 'Khalti'];
 export const PAYMENT_STATUSES = ['Paid', 'Pending', 'Failed', 'Refunded'];
 export const USER_STATUSES = ['Active', 'Inactive'];

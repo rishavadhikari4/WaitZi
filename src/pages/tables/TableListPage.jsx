@@ -84,10 +84,10 @@ export default function TableListPage() {
       <PageHeader title="Tables" actions={canManage && <Button onClick={() => navigate('/tables/new')}><Plus className="w-4 h-4 mr-1" /> Add Table</Button>} />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <StatsCard title="Total" value={stats.totalTables ?? tables.length} />
-        <StatsCard title="Available" value={stats.availableTables ?? 0} />
-        <StatsCard title="Occupied" value={stats.occupiedTables ?? 0} />
-        <StatsCard title="Reserved" value={stats.reservedTables ?? 0} />
+        <StatsCard title="Total" value={stats.total ?? tables.length} />
+        <StatsCard title="Available" value={stats.available ?? 0} />
+        <StatsCard title="Occupied" value={stats.occupied ?? 0} />
+        <StatsCard title="Reserved" value={stats.reserved ?? 0} />
       </div>
 
       <div className="mb-4">
