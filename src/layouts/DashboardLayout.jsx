@@ -61,7 +61,9 @@ export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
-  const socketRooms = useMemo(() => ['dashboard'], []);
+  // Use a dedicated 'admin-alerts' room so navigating away from /dashboard
+  // (which leaves the 'dashboard' room) does not kill this listener.
+  const socketRooms = useMemo(() => ['admin-alerts'], []);
   const socketEvents = useMemo(() => ({
     'order:new': (data) => {
       playTing();
