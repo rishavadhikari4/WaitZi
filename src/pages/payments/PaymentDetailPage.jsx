@@ -10,6 +10,7 @@ import Input from '../../components/ui/Input';
 import Spinner from '../../components/ui/Spinner';
 import useAuth from '../../hooks/useAuth';
 import { formatDateTime, formatCurrency } from '../../utils/formatters';
+import { PAYMENT_METHOD_COLORS } from '../../utils/constants';
 
 export default function PaymentDetailPage() {
   const { id } = useParams();

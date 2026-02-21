@@ -7,8 +7,7 @@ import PageHeader from '../../components/shared/PageHeader';
 import StatsCard from '../../components/shared/StatsCard';
 import Spinner from '../../components/ui/Spinner';
 import { formatCurrency } from '../../utils/formatters';
-
-const COLORS = ['#000000', '#4B5563', '#9CA3AF', '#D1D5DB'];
+import { PAYMENT_METHOD_COLORS } from '../../utils/constants';
 
 export default function DailySalesPage() {
   const [data, setData] = useState(null);
@@ -61,8 +60,8 @@ export default function DailySalesPage() {
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}>
-                {chartData.map((_, i) => (
-                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                {chartData.map((entry, i) => (
+                  <Cell key={i} fill={PAYMENT_METHOD_COLORS[entry.name]?.hex || '#9CA3AF'} />
                 ))}
               </Pie>
               <Tooltip formatter={(val) => formatCurrency(val)} />

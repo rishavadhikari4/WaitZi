@@ -10,7 +10,7 @@ import StatsCard from '../../components/shared/StatsCard';
 import PageHeader from '../../components/shared/PageHeader';
 import Spinner from '../../components/ui/Spinner';
 import { formatCurrency } from '../../utils/formatters';
-import { DASHBOARD_PERIODS } from '../../utils/constants';
+import { DASHBOARD_PERIODS, PAYMENT_METHOD_COLORS } from '../../utils/constants';
 
 const TABS = ['overview', 'sales', 'operations', 'menu'];
 const PIE_COLORS = ['#000', '#4B5563', '#9CA3AF', '#D1D5DB', '#E5E7EB'];
@@ -196,7 +196,7 @@ function SalesTab({ data }) {
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie data={methodsFormatted} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
-                  {methodsFormatted.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                  {methodsFormatted.map((entry, i) => <Cell key={i} fill={PAYMENT_METHOD_COLORS[entry.name]?.hex || PIE_COLORS[i % PIE_COLORS.length]} />)}
                 </Pie>
                 <Tooltip formatter={(value) => formatCurrency(value)} />
               </PieChart>

@@ -27,3 +27,11 @@ export const STATUS_COLORS = {
   Failed: 'bg-red-100 text-red-800',
   Refunded: 'bg-purple-100 text-purple-800',
 };
+
+export const PAYMENT_METHOD_COLORS = {
+  Cash: { badge: 'bg-emerald-100 text-emerald-800', hex: '#10B981' },
+  Khalti: { badge: 'bg-purple-100 text-purple-800', hex: '#7C3AED' },
+  Card: { badge: 'bg-blue-100 text-blue-800', hex: '#3B82F6' },
+  Fonepay: { badge: 'bg-red-100 text-red-800', hex: '#EF4444' },
+  NepalPay: { badge: 'bg-orange-100 text-orange-800', hex: '#F97316' },
+};

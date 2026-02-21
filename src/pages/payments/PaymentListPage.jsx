@@ -8,7 +8,7 @@ import Pagination from '../../components/shared/Pagination';
 import Badge from '../../components/ui/Badge';
 import Select from '../../components/ui/Select';
 import { formatDateTime, formatCurrency } from '../../utils/formatters';
-import { PAYMENT_METHODS, PAYMENT_STATUSES } from '../../utils/constants';
+import { PAYMENT_METHODS, PAYMENT_STATUSES, PAYMENT_METHOD_COLORS } from '../../utils/constants';
 
 export default function PaymentListPage() {
   const navigate = useNavigate();
@@ -41,7 +41,10 @@ export default function PaymentListPage() {
     { key: 'id', label: 'ID', render: (row) => <span className="font-mono text-xs">#{row._id?.slice(-6)}</span> },
     { key: 'order', label: 'Order', render: (row) => <span className="font-mono text-xs">#{(row.order?._id || row.order)?.slice(-6)}</span> },
     { key: 'amount', label: 'Amount', render: (row) => formatCurrency(row.amount) },
-    { key: 'paymentMethod', label: 'Method' },
+    { key: 'paymentMethod', label: 'Method', render: (row) => {
+      const mc = PAYMENT_METHOD_COLORS[row.paymentMethod];
+      return <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${mc?.badge || 'bg-gray-100 text-gray-800'}`}>{row.paymentMethod}</span>;
+    }},
     { key: 'paymentStatus', label: 'Status', render: (row) => <Badge status={row.paymentStatus} /> },
     { key: 'handledBy', label: 'Handled By', render: (row) => row.handledBy ? `${row.handledBy.firstName} ${row.handledBy.lastName}` : '-' },
     { key: 'paymentTime', label: 'Time', render: (row) => row.paymentTime ? formatDateTime(row.paymentTime) : '-' },
