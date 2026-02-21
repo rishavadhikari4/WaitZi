@@ -1,19 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
-import { ShoppingBag, DollarSign, Users, UtensilsCrossed, AlertTriangle } from 'lucide-react';
+import { ShoppingBag, DollarSign, Users, UtensilsCrossed, AlertTriangle, Clock, ChefHat, Activity } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell
 } from 'recharts';
-import { getDashboardOverview, getSalesAnalytics, getOperationalInsights, getMenuAnalytics } from '../../api/dashboard';
+import { getDashboardOverview, getSalesAnalytics, getOperationalInsights, getMenuAnalytics, getRealTimeStatus } from '../../api/dashboard';
 import StatsCard from '../../components/shared/StatsCard';
 import PageHeader from '../../components/shared/PageHeader';
 import Spinner from '../../components/ui/Spinner';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency, formatDateTime } from '../../utils/formatters';
 import { DASHBOARD_PERIODS, PAYMENT_METHOD_COLORS } from '../../utils/constants';
+import usePolling from '../../hooks/usePolling';
+import useSocket from '../../hooks/useSocket';
 
 const TABS = ['overview', 'sales', 'operations', 'menu'];
-const PIE_COLORS = ['#000', '#4B5563', '#9CA3AF', '#D1D5DB', '#E5E7EB'];
+const PIE_COLORS = ['#4f46e5', '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe'];
 
 export default function OverviewPage() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -23,6 +25,20 @@ export default function OverviewPage() {
   const [menuData, setMenuData] = useState(null);
   const [period, setPeriod] = useState('today');
   const [isLoading, setIsLoading] = useState(true);
+
+  // Real-time stats strip
+  const { data: rtData, refresh: rtRefresh } = usePolling(() => getRealTimeStatus(), 30000);
+  const socketRooms = useMemo(() => ['dashboard'], []);
+  const socketEvents = useMemo(() => ({
+    'order:new': () => rtRefresh(),
+    'order:status-updated': () => rtRefresh(),
+    'order:item-updated': () => rtRefresh(),
+    'order:paid': () => rtRefresh(),
+    'order:cancelled': () => rtRefresh(),
+    'order:items-added': () => rtRefresh(),
+  }), [rtRefresh]);
+  useSocket(socketRooms, socketEvents);
+  const rt = rtData?.data || {};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,13 +75,13 @@ export default function OverviewPage() {
       <PageHeader
         title="Dashboard"
         actions={
-          <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+          <div className="flex gap-1 bg-slate-100 rounded-lg p-1">
             {DASHBOARD_PERIODS.slice(0, 4).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
                 className={`px-3 py-1 rounded-md text-sm capitalize ${
-                  period === p ? 'bg-black text-white' : 'text-gray-600 hover:text-black'
+                  period === p ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 {p}
@@ -75,13 +91,32 @@ export default function OverviewPage() {
         }
       />
 
-      <div className="flex gap-1 bg-gray-100 rounded-lg p-1 mb-6 w-fit">
+      {/* Real-time status strip */}
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-2">
+          <Activity className="w-4 h-4 text-green-500" />
+          <span className="text-sm font-medium text-slate-700">Live Status</span>
+          {rt.lastUpdated && (
+            <span className="text-xs text-slate-400">· Updated {formatDateTime(rt.lastUpdated)}</span>
+          )}
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <StatsCard title="Active Orders" value={rt.activeOrders ?? 0} icon={ShoppingBag} compact />
+          <StatsCard title="Pending" value={rt.pendingOrders ?? 0} icon={Clock} compact />
+          <StatsCard title="Kitchen Queue" value={rt.kitchenQueue ?? 0} icon={ChefHat} compact />
+          <StatsCard title="Available Tables" value={rt.availableTables ?? 0} icon={UtensilsCrossed} compact />
+          <StatsCard title="Occupied Tables" value={rt.occupiedTables ?? 0} icon={UtensilsCrossed} compact />
+          <StatsCard title="Today's Revenue" value={formatCurrency(rt.totalRevenue ?? 0)} icon={DollarSign} compact />
+        </div>
+      </div>
+
+      <div className="flex gap-1 bg-slate-100 rounded-lg p-1 mb-6 w-fit">
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-1.5 rounded-md text-sm capitalize ${
-              activeTab === tab ? 'bg-black text-white' : 'text-gray-600 hover:text-black'
+              activeTab === tab ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'
             }`}
           >
             {tab}
@@ -119,15 +154,15 @@ function OverviewTab({ stats, salesTrends, popularItems }) {
           {salesTrends.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={salesTrends}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E5E5" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
-                <Line type="monotone" dataKey="total" stroke="#000" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="total" stroke="#4f46e5" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-400 text-sm text-center py-10">No data available</p>
+            <p className="text-slate-400 text-sm text-center py-10">No data available</p>
           )}
         </div>
 
@@ -136,15 +171,15 @@ function OverviewTab({ stats, salesTrends, popularItems }) {
           {popularItems.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={popularItems.slice(0, 8)}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E5E5" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} angle={-20} textAnchor="end" height={60} />
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
-                <Bar dataKey="count" fill="#000" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill="#4f46e5" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-400 text-sm text-center py-10">No data available</p>
+            <p className="text-slate-400 text-sm text-center py-10">No data available</p>
           )}
         </div>
       </div>
@@ -153,7 +188,7 @@ function OverviewTab({ stats, salesTrends, popularItems }) {
 }
 
 function SalesTab({ data }) {
-  if (!data) return <p className="text-gray-400 text-center py-10">No data available</p>;
+  if (!data) return <p className="text-slate-400 text-center py-10">No data available</p>;
 
   const summary = data.summary || {};
   const trends = data.trends || [];
@@ -178,15 +213,15 @@ function SalesTab({ data }) {
           {hourlyFormatted.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={hourlyFormatted}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E5E5" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="hour" tick={{ fontSize: 11 }} interval={1} />
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
-                <Bar dataKey="total" fill="#000" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="total" fill="#4f46e5" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-400 text-sm text-center py-10">No data available</p>
+            <p className="text-slate-400 text-sm text-center py-10">No data available</p>
           )}
         </div>
 
@@ -202,7 +237,7 @@ function SalesTab({ data }) {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-400 text-sm text-center py-10">No data available</p>
+            <p className="text-slate-400 text-sm text-center py-10">No data available</p>
           )}
         </div>
       </div>
@@ -212,11 +247,11 @@ function SalesTab({ data }) {
           <h3 className="font-semibold mb-4">Top Customers</h3>
           <div className="space-y-2">
             {topCustomers.slice(0, 5).map((c, i) => (
-              <div key={i} className="flex justify-between items-center text-sm py-1 border-b border-[#E5E5E5] last:border-0">
+              <div key={i} className="flex justify-between items-center text-sm py-1 border-b border-slate-200 last:border-0">
                 <span className="font-medium">{c._id || 'Guest'}</span>
-                <div className="flex gap-4 text-gray-500">
+                <div className="flex gap-4 text-slate-500">
                   <span>{c.orderCount} orders</span>
-                  <span className="font-medium text-black">{formatCurrency(c.totalSpent)}</span>
+                  <span className="font-medium text-slate-900">{formatCurrency(c.totalSpent)}</span>
                 </div>
               </div>
             ))}
@@ -228,7 +263,7 @@ function SalesTab({ data }) {
 }
 
 function OperationsTab({ data }) {
-  if (!data) return <p className="text-gray-400 text-center py-10">No data available</p>;
+  if (!data) return <p className="text-slate-400 text-center py-10">No data available</p>;
 
   const service = data.service || {};
   const kitchen = data.kitchen || {};
@@ -262,7 +297,7 @@ function OperationsTab({ data }) {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-400 text-sm text-center py-10">No data available</p>
+            <p className="text-slate-400 text-sm text-center py-10">No data available</p>
           )}
         </div>
 
@@ -272,19 +307,19 @@ function OperationsTab({ data }) {
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center p-3 bg-green-50 rounded-lg">
                 <p className="text-2xl font-bold">{tableStatus.available ?? 0}</p>
-                <p className="text-xs text-gray-500">Available</p>
+                <p className="text-xs text-slate-500">Available</p>
               </div>
               <div className="text-center p-3 bg-red-50 rounded-lg">
                 <p className="text-2xl font-bold">{tableStatus.occupied ?? 0}</p>
-                <p className="text-xs text-gray-500">Occupied</p>
+                <p className="text-xs text-slate-500">Occupied</p>
               </div>
               <div className="text-center p-3 bg-yellow-50 rounded-lg">
                 <p className="text-2xl font-bold">{tableStatus.reserved ?? 0}</p>
-                <p className="text-xs text-gray-500">Reserved</p>
+                <p className="text-xs text-slate-500">Reserved</p>
               </div>
             </div>
             {tables.utilization && (
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-slate-600">
                 <p>Total Capacity: {tables.utilization.totalCapacity ?? 0} seats</p>
                 <p>Occupied: {tables.utilization.occupiedCapacity ?? 0} seats</p>
               </div>
@@ -296,9 +331,9 @@ function OperationsTab({ data }) {
       <div className="card">
         <h3 className="font-semibold mb-4">Service Metrics</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
-          <div><span className="text-gray-500">Total Orders</span><p className="font-semibold text-lg">{service.totalOrders ?? 0}</p></div>
-          <div><span className="text-gray-500">Cancelled Orders</span><p className="font-semibold text-lg">{service.cancelledOrders ?? 0}</p></div>
-          <div><span className="text-gray-500">Total Staff</span><p className="font-semibold text-lg">{staff.total ?? 0}</p></div>
+          <div><span className="text-slate-500">Total Orders</span><p className="font-semibold text-lg">{service.totalOrders ?? 0}</p></div>
+          <div><span className="text-slate-500">Cancelled Orders</span><p className="font-semibold text-lg">{service.cancelledOrders ?? 0}</p></div>
+          <div><span className="text-slate-500">Total Staff</span><p className="font-semibold text-lg">{staff.total ?? 0}</p></div>
         </div>
       </div>
     </>
@@ -306,7 +341,7 @@ function OperationsTab({ data }) {
 }
 
 function MenuTab({ data }) {
-  if (!data) return <p className="text-gray-400 text-center py-10">No data available</p>;
+  if (!data) return <p className="text-slate-400 text-center py-10">No data available</p>;
 
   const summary = data.summary || {};
   const topSelling = data.performance?.topSelling || [];
@@ -332,15 +367,15 @@ function MenuTab({ data }) {
           {topFormatted.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={topFormatted} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E5E5" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis type="number" tick={{ fontSize: 12 }} />
                 <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={100} />
                 <Tooltip />
-                <Bar dataKey="quantity" fill="#000" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="quantity" fill="#4f46e5" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <p className="text-gray-400 text-sm text-center py-10">No data available</p>
+            <p className="text-slate-400 text-sm text-center py-10">No data available</p>
           )}
         </div>
 
@@ -349,14 +384,14 @@ function MenuTab({ data }) {
           {underPerforming.length > 0 ? (
             <div className="space-y-2">
               {underPerforming.slice(0, 8).map((item, i) => (
-                <div key={i} className="flex justify-between items-center text-sm py-1 border-b border-[#E5E5E5] last:border-0">
+                <div key={i} className="flex justify-between items-center text-sm py-1 border-b border-slate-200 last:border-0">
                   <span>{item.name || 'Item'}</span>
-                  <span className="text-gray-500">{item.totalQuantity} sold</span>
+                  <span className="text-slate-500">{item.totalQuantity} sold</span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-400 text-sm text-center py-10">No data available</p>
+            <p className="text-slate-400 text-sm text-center py-10">No data available</p>
           )}
         </div>
       </div>

@@ -43,7 +43,7 @@ export default function PaymentListPage() {
     { key: 'amount', label: 'Amount', render: (row) => formatCurrency(row.amount) },
     { key: 'paymentMethod', label: 'Method', render: (row) => {
       const mc = PAYMENT_METHOD_COLORS[row.paymentMethod];
-      return <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${mc?.badge || 'bg-gray-100 text-gray-800'}`}>{row.paymentMethod}</span>;
+      return <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${mc?.badge || 'bg-slate-100 text-slate-800'}`}>{row.paymentMethod}</span>;
     }},
     { key: 'paymentStatus', label: 'Status', render: (row) => <Badge status={row.paymentStatus} /> },
     { key: 'handledBy', label: 'Handled By', render: (row) => row.handledBy ? `${row.handledBy.firstName} ${row.handledBy.lastName}` : '-' },

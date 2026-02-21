@@ -3,7 +3,7 @@ import clsx from 'clsx';
 export default function TextArea({ label, error, className, ...props }) {
   return (
     <div className="space-y-1">
-      {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
+      {label && <label className="block text-sm font-medium text-slate-700">{label}</label>}
       <textarea
         className={clsx('input min-h-[80px] resize-y', error && 'border-red-500', className)}
         {...props}

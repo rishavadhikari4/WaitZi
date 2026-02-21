@@ -24,11 +24,13 @@ export default function DailySalesPage() {
 
   if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
 
-  const stats = data || {};
-  const methodBreakdown = stats.paymentMethodBreakdown || stats.breakdown || [];
-  const chartData = Array.isArray(methodBreakdown)
-    ? methodBreakdown.map((m) => ({ name: m.method || m.name, value: m.total || m.amount || 0 }))
-    : Object.entries(methodBreakdown).map(([name, value]) => ({ name, value }));
+  // Backend returns: { date, summary: { totalSales, totalTransactions, averageTransaction }, paymentMethods: [...] }
+  const summary = data?.summary || {};
+  const methodBreakdown = data?.paymentMethods || [];
+  const chartData = methodBreakdown.map((m) => ({
+    name: m._id || m.method || m.name || 'Unknown',
+    value: m.total || m.amount || 0,
+  }));
 
   return (
     <div>
@@ -45,13 +47,9 @@ export default function DailySalesPage() {
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <StatsCard title="Total Sales" value={formatCurrency(stats.totalSales ?? stats.totalAmount ?? 0)} icon={DollarSign} />
-        <StatsCard title="Transactions" value={stats.totalTransactions ?? stats.count ?? 0} icon={CreditCard} />
-        <StatsCard
-          title="Average"
-          value={formatCurrency(stats.averageTransaction ?? (stats.totalSales && stats.totalTransactions ? stats.totalSales / stats.totalTransactions : 0))}
-          icon={TrendingUp}
-        />
+        <StatsCard title="Total Sales" value={formatCurrency(summary.totalSales ?? 0)} icon={DollarSign} />
+        <StatsCard title="Transactions" value={summary.totalTransactions ?? 0} icon={CreditCard} />
+        <StatsCard title="Average" value={formatCurrency(summary.averageTransaction ?? 0)} icon={TrendingUp} />
       </div>
 
       {chartData.length > 0 && (

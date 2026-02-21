@@ -22,10 +22,10 @@ export default function FileUpload({ label, onChange, accept = 'image/*', previe
 
   return (
     <div className="space-y-1">
-      {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
+      {label && <label className="block text-sm font-medium text-slate-700">{label}</label>}
       {preview ? (
         <div className="relative inline-block">
-          <img src={preview} alt="Preview" className="w-32 h-32 object-cover rounded-lg border border-[#E5E5E5]" />
+          <img src={preview} alt="Preview" className="w-32 h-32 object-cover rounded-lg border border-slate-200" />
           <button
             onClick={handleClear}
             className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5"
@@ -37,10 +37,11 @@ export default function FileUpload({ label, onChange, accept = 'image/*', previe
       ) : (
         <div
           onClick={() => inputRef.current?.click()}
-          className="border-2 border-dashed border-[#E5E5E5] rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition-colors"
+          className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center cursor-pointer hover:border-indigo-400 transition-colors"
         >
-          <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-          <p className="text-sm text-gray-500">Click to upload</p>
+          <Upload className="w-8 h-8 mx-auto mb-2 text-slate-400" />
+          <p className="text-sm text-slate-500">Click to upload</p>
+          <p className="text-xs text-slate-400 mt-1">or drag and drop</p>
         </div>
       )}
       <input ref={inputRef} type="file" accept={accept} onChange={handleChange} className="hidden" />

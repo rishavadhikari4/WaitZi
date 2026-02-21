@@ -19,7 +19,7 @@ export default function RoleManagementPage() {
   const [deleteId, setDeleteId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const systemRoles = ['admin', 'manager', 'staff'];
+  const systemRoles = ['admin'];
 
   const fetchRoles = () => {
     getAllRoles()
@@ -91,13 +91,13 @@ export default function RoleManagementPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="font-semibold capitalize">{role.name}</h3>
-                  {role.description && <p className="text-sm text-gray-500 mt-1">{role.description}</p>}
+                  {role.description && <p className="text-sm text-slate-500 mt-1">{role.description}</p>}
                 </div>
                 {isSystem && (
-                  <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">System</span>
+                  <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">System</span>
                 )}
               </div>
-              <div className="flex gap-2 mt-3 pt-3 border-t border-[#E5E5E5]">
+              <div className="flex gap-2 mt-3 pt-3 border-t border-slate-200">
                 <button
                   onClick={() => openEditForm(role)}
                   className="flex items-center gap-1 text-sm text-black hover:underline"

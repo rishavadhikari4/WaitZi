@@ -85,23 +85,23 @@ export default function WaiterDashboard() {
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">My Tables</h3>
-            <button onClick={() => navigate('/tables')} className="text-sm text-gray-500 hover:text-black">
+            <button onClick={() => navigate('/tables')} className="text-sm text-slate-500 hover:text-slate-900">
               View all
             </button>
           </div>
           {myTables.length === 0 ? (
-            <p className="text-gray-400 text-sm text-center py-6">No tables assigned to you</p>
+            <p className="text-slate-400 text-sm text-center py-6">No tables assigned to you</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {myTables.map((table) => (
                 <div
                   key={table._id}
                   onClick={() => navigate('/tables')}
-                  className="border border-[#E5E5E5] rounded-lg p-3 text-center cursor-pointer hover:bg-gray-50"
+                  className="border border-slate-200 rounded-lg p-3 text-center cursor-pointer hover:bg-slate-50"
                 >
                   <p className="font-bold text-lg">T{table.tableNumber}</p>
                   <Badge status={table.status} />
-                  <p className="text-xs text-gray-400 mt-1">Cap: {table.capacity}</p>
+                  <p className="text-xs text-slate-400 mt-1">Cap: {table.capacity}</p>
                 </div>
               ))}
             </div>
@@ -112,25 +112,25 @@ export default function WaiterDashboard() {
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">Recent Orders</h3>
-            <button onClick={() => navigate('/orders')} className="text-sm text-gray-500 hover:text-black">
+            <button onClick={() => navigate('/orders')} className="text-sm text-slate-500 hover:text-slate-900">
               View all
             </button>
           </div>
           {orders.length === 0 ? (
-            <p className="text-gray-400 text-sm text-center py-6">No active orders</p>
+            <p className="text-slate-400 text-sm text-center py-6">No active orders</p>
           ) : (
             <div className="space-y-2 max-h-80 overflow-y-auto">
               {orders.slice(0, 10).map((order) => (
                 <div
                   key={order._id}
                   onClick={() => navigate(`/orders/${order._id}`)}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer border border-[#E5E5E5]"
+                  className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer border border-slate-200"
                 >
                   <div>
                     <p className="text-sm font-medium">
                       Table {order.table?.tableNumber ?? '?'} - {order.customerName || 'Customer'}
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-slate-400">
                       {order.items?.length ?? 0} items &middot; {formatTime(order.createdAt)}
                     </p>
                   </div>

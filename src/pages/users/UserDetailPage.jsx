@@ -74,7 +74,7 @@ export default function UserDetailPage() {
   };
 
   if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
-  if (!user) return <p className="text-center py-20 text-gray-500">User not found</p>;
+  if (!user) return <p className="text-center py-20 text-slate-500">User not found</p>;
 
   return (
     <div className="max-w-2xl">
@@ -109,22 +109,22 @@ export default function UserDetailPage() {
           )}
           <div>
             <h2 className="text-xl font-bold">{user.firstName} {user.lastName}</h2>
-            <p className="text-gray-500 capitalize">{user.role?.name}</p>
+            <p className="text-slate-500 capitalize">{user.role?.name}</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div><span className="text-gray-500">Email</span><p className="font-medium mt-1">{user.email}</p></div>
-          <div><span className="text-gray-500">Phone</span><p className="font-medium mt-1">{user.number || '-'}</p></div>
-          <div><span className="text-gray-500">Address</span><p className="font-medium mt-1">{user.address || '-'}</p></div>
-          <div><span className="text-gray-500">Status</span><div className="mt-1"><Badge status={user.status} /></div></div>
-          <div><span className="text-gray-500">Joined</span><p className="font-medium mt-1">{formatDateTime(user.createdAt)}</p></div>
+          <div><span className="text-slate-500">Email</span><p className="font-medium mt-1">{user.email}</p></div>
+          <div><span className="text-slate-500">Phone</span><p className="font-medium mt-1">{user.number || '-'}</p></div>
+          <div><span className="text-slate-500">Address</span><p className="font-medium mt-1">{user.address || '-'}</p></div>
+          <div><span className="text-slate-500">Status</span><div className="mt-1"><Badge status={user.status} /></div></div>
+          <div><span className="text-slate-500">Joined</span><p className="font-medium mt-1">{formatDateTime(user.createdAt)}</p></div>
         </div>
       </div>
 
       {tempPassword && (
         <div className="card mt-6 border-2 border-green-200 bg-green-50">
           <h3 className="font-semibold mb-2">Temporary Password Generated</h3>
-          <p className="text-sm text-gray-600 mb-2">Share this password with the user. They will be required to change it on first login.</p>
+          <p className="text-sm text-slate-600 mb-2">Share this password with the user. They will be required to change it on first login.</p>
           <div className="flex items-center gap-2">
             <code className="bg-white px-3 py-2 rounded border border-green-300 font-mono text-sm flex-1">{tempPassword}</code>
             <Button

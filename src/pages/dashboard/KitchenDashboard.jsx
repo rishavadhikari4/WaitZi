@@ -69,7 +69,7 @@ export default function KitchenDashboard() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
+        <div className="text-center py-20 text-slate-400">
           <ChefHat className="w-16 h-16 mx-auto mb-4" />
           <p className="text-lg">Kitchen is clear!</p>
           <p className="text-sm">No orders in queue right now.</p>
@@ -91,11 +91,11 @@ export default function KitchenDashboard() {
                     <span className="text-xl font-bold">Table {order.table?.tableNumber ?? '?'}</span>
                     <Badge status={order.status} className="ml-2" />
                   </div>
-                  <span className="text-sm text-gray-400">{formatTime(order.createdAt)}</span>
+                  <span className="text-sm text-slate-400">{formatTime(order.createdAt)}</span>
                 </div>
 
                 {order.customerName && (
-                  <p className="text-sm text-gray-500 mb-2">{order.customerName}</p>
+                  <p className="text-sm text-slate-500 mb-2">{order.customerName}</p>
                 )}
 
                 <div className="space-y-2">
@@ -109,7 +109,7 @@ export default function KitchenDashboard() {
                           ? 'bg-blue-50'
                           : item.status === 'Ready'
                           ? 'bg-green-50'
-                          : 'bg-gray-50'
+                          : 'bg-slate-50'
                       }`}
                     >
                       <div className="flex-1">
@@ -124,7 +124,7 @@ export default function KitchenDashboard() {
                         {item.status === 'Pending' && (
                           <button
                             onClick={() => handleItemStatus(order._id, item._id || item._id, 'Cooking')}
-                            className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 flex items-center gap-1"
+                            className="px-3 py-1.5 bg-blue-600 text-white rounded-md text-xs font-medium hover:bg-blue-700 flex items-center gap-1"
                           >
                             <Flame className="w-3.5 h-3.5" /> Cook
                           </button>
@@ -132,7 +132,7 @@ export default function KitchenDashboard() {
                         {item.status === 'Cooking' && (
                           <button
                             onClick={() => handleItemStatus(order._id, item._id || item._id, 'Ready')}
-                            className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 flex items-center gap-1"
+                            className="px-3 py-1.5 bg-green-600 text-white rounded-md text-xs font-medium hover:bg-green-700 flex items-center gap-1"
                           >
                             <CheckCircle2 className="w-3.5 h-3.5" /> Done
                           </button>
@@ -143,7 +143,7 @@ export default function KitchenDashboard() {
                           </span>
                         )}
                         {item.status === 'Served' && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-medium">
+                          <span className="px-2 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-medium">
                             Served
                           </span>
                         )}

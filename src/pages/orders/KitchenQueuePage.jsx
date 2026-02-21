@@ -42,7 +42,7 @@ export default function KitchenQueuePage() {
     <div>
       <PageHeader title="Kitchen Queue" subtitle={`${orders.length} active orders`} />
       {orders.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
+        <div className="text-center py-20 text-slate-400">
           <ChefHat className="w-12 h-12 mx-auto mb-3" />
           <p>No orders in queue</p>
         </div>
@@ -53,18 +53,18 @@ export default function KitchenQueuePage() {
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <span className="text-lg font-bold">Table {order.table?.tableNumber ?? '?'}</span>
-                  <span className="text-xs text-gray-400 ml-2">{formatTime(order.createdAt)}</span>
+                  <span className="text-xs text-slate-400 ml-2">{formatTime(order.createdAt)}</span>
                 </div>
                 <Badge status={order.status} />
               </div>
               <div className="space-y-2">
                 {order.items?.map((item, i) => (
-                  <div key={item._id || i} className="flex items-center justify-between py-1.5 border-b border-[#E5E5E5] last:border-0">
+                  <div key={item._id || i} className="flex items-center justify-between py-1.5 border-b border-slate-200 last:border-0">
                     <div>
                       <p className="text-sm font-medium">
                         {item.quantity}x {item.menuItem?.name || 'Item'}
                       </p>
-                      {item.notes && <p className="text-xs text-gray-400">{item.notes}</p>}
+                      {item.notes && <p className="text-xs text-slate-400">{item.notes}</p>}
                     </div>
                     <div className="flex gap-1">
                       {item.status === 'Pending' && (
@@ -96,7 +96,7 @@ export default function KitchenQueuePage() {
                 ))}
               </div>
               {order.note && (
-                <p className="text-xs text-gray-500 mt-2 bg-yellow-50 p-2 rounded">Note: {order.note}</p>
+                <p className="text-xs text-slate-500 mt-2 bg-yellow-50 p-2 rounded">Note: {order.note}</p>
               )}
             </div>
           ))}

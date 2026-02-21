@@ -51,7 +51,7 @@ export default function CategoryListPage() {
     <div>
       <PageHeader title="Categories" actions={canManage && <Button onClick={() => navigate('/categories/new')}><Plus className="w-4 h-4 mr-1" /> Add Category</Button>} />
       {categories.length === 0 ? (
-        <p className="text-center text-gray-400 py-10">No categories yet</p>
+        <p className="text-center text-slate-400 py-10">No categories yet</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map((cat) => (
@@ -60,7 +60,7 @@ export default function CategoryListPage() {
                 {cat.image ? (
                   <img src={cat.image} alt={cat.name} className="w-16 h-16 object-cover rounded-lg flex-shrink-0" />
                 ) : (
-                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xl font-bold flex-shrink-0">
+                  <div className="w-16 h-16 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 text-xl font-bold flex-shrink-0">
                     {cat.name?.[0]}
                   </div>
                 )}
@@ -69,11 +69,11 @@ export default function CategoryListPage() {
                     <h3 className="font-semibold truncate">{cat.name}</h3>
                     {cat.isActive === false && <Badge status="Inactive" />}
                   </div>
-                  {cat.description && <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">{cat.description}</p>}
+                  {cat.description && <p className="text-sm text-slate-500 mt-0.5 line-clamp-2">{cat.description}</p>}
                 </div>
               </div>
               {canManage && (
-                <div className="flex gap-2 mt-3 pt-3 border-t border-[#E5E5E5]">
+                <div className="flex gap-2 mt-3 pt-3 border-t border-slate-200">
                   <button
                     onClick={() => navigate(`/categories/${cat._id}/edit`)}
                     className="flex items-center gap-1 text-sm text-black hover:underline"

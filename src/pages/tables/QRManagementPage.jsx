@@ -93,10 +93,10 @@ export default function QRManagementPage() {
               <img
                 src={typeof qrImages[table._id] === 'string' ? qrImages[table._id] : ''}
                 alt={`QR Table ${table.tableNumber}`}
-                className="w-40 h-40 mx-auto mb-3 border border-[#E5E5E5] rounded"
+                className="w-40 h-40 mx-auto mb-3 border border-slate-200 rounded"
               />
             ) : (
-              <div className="w-40 h-40 mx-auto mb-3 border-2 border-dashed border-[#E5E5E5] rounded flex items-center justify-center">
+              <div className="w-40 h-40 mx-auto mb-3 border-2 border-dashed border-slate-200 rounded flex items-center justify-center">
                 <QrCode className="w-10 h-10 text-gray-300" />
               </div>
             )}
@@ -112,7 +112,7 @@ export default function QRManagementPage() {
               </button>
             </div>
             {analytics[table._id] && (
-              <div className="mt-3 pt-3 border-t border-[#E5E5E5] text-xs text-gray-600 space-y-1">
+              <div className="mt-3 pt-3 border-t border-slate-200 text-xs text-slate-600 space-y-1">
                 <div className="flex justify-between"><span>Total Scans</span><span className="font-medium">{analytics[table._id].totalScans ?? 0}</span></div>
                 <div className="flex justify-between"><span>Orders via QR</span><span className="font-medium">{analytics[table._id].totalOrders ?? 0}</span></div>
                 {analytics[table._id].lastScanned && (

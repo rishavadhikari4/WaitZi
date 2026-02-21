@@ -76,7 +76,7 @@ export default function OrderDetailPage() {
   };
 
   if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
-  if (!order) return <p className="text-center py-20 text-gray-500">Order not found</p>;
+  if (!order) return <p className="text-center py-20 text-slate-500">Order not found</p>;
 
   return (
     <div>
@@ -100,16 +100,16 @@ export default function OrderDetailPage() {
             <h3 className="font-semibold mb-4">Order Items</h3>
             <div className="space-y-3">
               {order.items?.map((item, i) => (
-                <div key={item._id || i} className="flex items-center justify-between py-2 border-b border-[#E5E5E5] last:border-0">
+                <div key={item._id || i} className="flex items-center justify-between py-2 border-b border-slate-200 last:border-0">
                   <div className="flex-1">
                     <p className="font-medium text-sm">{item.menuItem?.name || 'Item'}</p>
-                    <p className="text-xs text-gray-500">Qty: {item.quantity} {item.notes && `- ${item.notes}`}</p>
+                    <p className="text-xs text-slate-500">Qty: {item.quantity} {item.notes && `- ${item.notes}`}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <select
                       value={item.status}
                       onChange={(e) => handleItemStatusChange(item._id || item._id, e.target.value)}
-                      className="text-xs border border-[#E5E5E5] rounded px-2 py-1"
+                      className="text-xs border border-slate-200 rounded px-2 py-1"
                     >
                       {ORDER_ITEM_STATUSES.map((s) => (
                         <option key={s} value={s}>{s}</option>
@@ -122,7 +122,7 @@ export default function OrderDetailPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-4 pt-3 border-t border-[#E5E5E5] space-y-1">
+            <div className="mt-4 pt-3 border-t border-slate-200 space-y-1">
               <div className="flex justify-between text-sm"><span>Subtotal</span><span>{formatCurrency(order.totalAmount)}</span></div>
               {order.discount > 0 && <div className="flex justify-between text-sm text-red-600"><span>Discount</span><span>-{formatCurrency(order.discount)}</span></div>}
               <div className="flex justify-between font-bold"><span>Total</span><span>{formatCurrency(order.finalAmount || order.totalAmount)}</span></div>
@@ -134,12 +134,12 @@ export default function OrderDetailPage() {
           <div className="card space-y-3">
             <h3 className="font-semibold">Details</h3>
             <div className="text-sm space-y-2">
-              <div className="flex justify-between"><span className="text-gray-500">Status</span><Badge status={order.status} /></div>
-              <div className="flex justify-between"><span className="text-gray-500">Table</span><span>{order.table?.tableNumber ?? '-'}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Customer</span><span>{order.customerName || '-'}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Created</span><span>{formatDateTime(order.createdAt)}</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">Status</span><Badge status={order.status} /></div>
+              <div className="flex justify-between"><span className="text-slate-500">Table</span><span>{order.table?.tableNumber ?? '-'}</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">Customer</span><span>{order.customerName || '-'}</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">Created</span><span>{formatDateTime(order.createdAt)}</span></div>
               {order.assignedWaiter && (
-                <div className="flex justify-between"><span className="text-gray-500">Waiter</span><span>{order.assignedWaiter.firstName} {order.assignedWaiter.lastName}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">Waiter</span><span>{order.assignedWaiter.firstName} {order.assignedWaiter.lastName}</span></div>
               )}
             </div>
           </div>

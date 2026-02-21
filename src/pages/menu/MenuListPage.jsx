@@ -74,7 +74,7 @@ export default function MenuListPage() {
   const columns = [
     {
       key: 'image', label: '', render: (row) =>
-        row.image ? <img src={row.image} alt="" className="w-10 h-10 object-cover rounded" /> : <div className="w-10 h-10 bg-gray-100 rounded" />
+        row.image ? <img src={row.image} alt="" className="w-10 h-10 object-cover rounded" /> : <div className="w-10 h-10 bg-slate-100 rounded" />
     },
     { key: 'name', label: 'Name', sortable: true },
     { key: 'category', label: 'Category', render: (row) => row.category?.name || '-' },

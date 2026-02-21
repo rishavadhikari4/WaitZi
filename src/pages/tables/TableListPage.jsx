@@ -107,15 +107,15 @@ export default function TableListPage() {
               <h3 className="text-lg font-bold">Table {table.tableNumber}</h3>
               <Badge status={table.status} />
             </div>
-            <p className="text-sm text-gray-500 mb-1">Capacity: {table.capacity}</p>
+            <p className="text-sm text-slate-500 mb-1">Capacity: {table.capacity}</p>
             {table.assignedWaiter && (
-              <p className="text-sm text-gray-500">Waiter: {table.assignedWaiter.firstName} {table.assignedWaiter.lastName}</p>
+              <p className="text-sm text-slate-500">Waiter: {table.assignedWaiter.firstName} {table.assignedWaiter.lastName}</p>
             )}
             <div className="mt-3 flex gap-2">
               <select
                 value={table.status}
                 onChange={(e) => handleStatusChange(table._id, e.target.value)}
-                className="text-xs border border-[#E5E5E5] rounded px-2 py-1 flex-1"
+                className="text-xs border border-slate-200 rounded px-2 py-1 flex-1"
               >
                 {TABLE_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
@@ -124,7 +124,7 @@ export default function TableListPage() {
               )}
             </div>
             {canManage && (
-              <div className="flex gap-2 mt-3 pt-3 border-t border-[#E5E5E5]">
+              <div className="flex gap-2 mt-3 pt-3 border-t border-slate-200">
                 <button
                   onClick={() => navigate(`/tables/${table._id}/edit`)}
                   className="flex items-center gap-1 text-sm text-black hover:underline"

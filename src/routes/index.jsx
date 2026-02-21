@@ -20,9 +20,7 @@ import OrderTracking from '../pages/public/OrderTracking';
 import PaymentResult from '../pages/public/PaymentResult';
 
 // Dashboard pages
-import DashboardRouter from '../pages/dashboard/DashboardRouter';
 import OverviewPage from '../pages/dashboard/OverviewPage';
-import RealTimePage from '../pages/dashboard/RealTimePage';
 
 // Order pages
 import OrderListPage from '../pages/orders/OrderListPage';
@@ -57,9 +55,9 @@ import RoleManagementPage from '../pages/users/RoleManagementPage';
 import NotFoundPage from '../pages/errors/NotFoundPage';
 import UnauthorizedPage from '../pages/errors/UnauthorizedPage';
 
-const allStaff = ['admin', 'manager', 'waiter', 'chef', 'kitchen_staff'];
-const adminManager = ['admin', 'manager'];
-const kitchenRoles = ['admin', 'manager', 'chef', 'kitchen_staff'];
+const allStaff = ['admin'];
+const adminManager = ['admin'];
+const kitchenRoles = ['admin'];
 
 export default function AppRoutes() {
   return (
@@ -83,43 +81,41 @@ export default function AppRoutes() {
         <Route path="/order/payment-result" element={<PaymentResult />} />
       </Route>
 
-      {/* Dashboard routes (protected) */}
+      {/* Dashboard routes (protected — admin only) */}
       <Route element={<ProtectedRoute allowedRoles={allStaff}><DashboardLayout /></ProtectedRoute>}>
-        <Route path="/dashboard" element={<DashboardRouter />} />
-        <Route path="/dashboard/analytics" element={<ProtectedRoute allowedRoles={adminManager}><OverviewPage /></ProtectedRoute>} />
-        <Route path="/dashboard/real-time" element={<RealTimePage />} />
+        <Route path="/dashboard" element={<OverviewPage />} />
 
         {/* Orders */}
         <Route path="/orders" element={<OrderListPage />} />
         <Route path="/orders/:id" element={<OrderDetailPage />} />
-        <Route path="/kitchen" element={<ProtectedRoute allowedRoles={kitchenRoles}><KitchenQueuePage /></ProtectedRoute>} />
+        <Route path="/kitchen" element={<KitchenQueuePage />} />
 
         {/* Menu */}
-        <Route path="/menu" element={<ProtectedRoute allowedRoles={adminManager}><MenuListPage /></ProtectedRoute>} />
-        <Route path="/menu/new" element={<ProtectedRoute allowedRoles={adminManager}><MenuFormPage /></ProtectedRoute>} />
-        <Route path="/menu/:id/edit" element={<ProtectedRoute allowedRoles={adminManager}><MenuFormPage /></ProtectedRoute>} />
-        <Route path="/categories" element={<ProtectedRoute allowedRoles={adminManager}><CategoryListPage /></ProtectedRoute>} />
-        <Route path="/categories/new" element={<ProtectedRoute allowedRoles={adminManager}><CategoryFormPage /></ProtectedRoute>} />
-        <Route path="/categories/:id/edit" element={<ProtectedRoute allowedRoles={adminManager}><CategoryFormPage /></ProtectedRoute>} />
+        <Route path="/menu" element={<MenuListPage />} />
+        <Route path="/menu/new" element={<MenuFormPage />} />
+        <Route path="/menu/:id/edit" element={<MenuFormPage />} />
+        <Route path="/categories" element={<CategoryListPage />} />
+        <Route path="/categories/new" element={<CategoryFormPage />} />
+        <Route path="/categories/:id/edit" element={<CategoryFormPage />} />
 
         {/* Tables */}
         <Route path="/tables" element={<TableListPage />} />
-        <Route path="/tables/new" element={<ProtectedRoute allowedRoles={adminManager}><TableFormPage /></ProtectedRoute>} />
-        <Route path="/tables/:id/edit" element={<ProtectedRoute allowedRoles={adminManager}><TableFormPage /></ProtectedRoute>} />
+        <Route path="/tables/new" element={<TableFormPage />} />
+        <Route path="/tables/:id/edit" element={<TableFormPage />} />
         <Route path="/tables/qr" element={<QRManagementPage />} />
 
         {/* Payments */}
         <Route path="/payments" element={<PaymentListPage />} />
-        <Route path="/payments/daily-sales" element={<ProtectedRoute allowedRoles={adminManager}><DailySalesPage /></ProtectedRoute>} />
+        <Route path="/payments/daily-sales" element={<DailySalesPage />} />
         <Route path="/payments/process/:orderId" element={<ProcessPaymentPage />} />
         <Route path="/payments/:id" element={<PaymentDetailPage />} />
 
         {/* Users */}
-        <Route path="/users" element={<ProtectedRoute allowedRoles={adminManager}><UserListPage /></ProtectedRoute>} />
-        <Route path="/users/new" element={<ProtectedRoute allowedRoles={['admin']}><UserFormPage /></ProtectedRoute>} />
-        <Route path="/users/:id" element={<ProtectedRoute allowedRoles={adminManager}><UserDetailPage /></ProtectedRoute>} />
+        <Route path="/users" element={<UserListPage />} />
+        <Route path="/users/new" element={<UserFormPage />} />
+        <Route path="/users/:id" element={<UserDetailPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/roles" element={<ProtectedRoute allowedRoles={['admin']}><RoleManagementPage /></ProtectedRoute>} />
+        <Route path="/roles" element={<RoleManagementPage />} />
 
         {/* Password */}
         <Route path="/change-password" element={<ChangePasswordPage />} />
