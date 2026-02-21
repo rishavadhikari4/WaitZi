@@ -30,7 +30,3 @@ export const handleAuthenticationError = (error) => {
     window.location.href = '/login';
   }
 };
-
-export const isAuthenticationError = (error) => {
-  return error?.status === 401 || error?.response?.status === 401;
-};

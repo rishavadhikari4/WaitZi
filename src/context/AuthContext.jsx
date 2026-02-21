@@ -39,13 +39,10 @@ export function AuthProvider({ children }) {
   }, []);
 
   const verifySession = useCallback(async () => {
-    console.log('Verifying session...');
     try {
       const verifyResponse = await authApi.verifyToken();
-      console.log('Session verification successful:', verifyResponse.data);
       setUser(verifyResponse.data.user || verifyResponse.data);
-    } catch (error) {
-      console.error('Session verification failed:', error.message, error.status);
+    } catch {
       setUser(null);
     } finally {
       setIsLoading(false);
