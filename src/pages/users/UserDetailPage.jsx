@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getUser, updateUserStatus, deleteUser } from '../../api/users';
@@ -20,10 +20,11 @@ export default function UserDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showDelete, setShowDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isTogglingStatus, setIsTogglingStatus] = useState(false);
   const [tempPassword, setTempPassword] = useState(null);
   const [isGeneratingPassword, setIsGeneratingPassword] = useState(false);
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const res = await getUser(id);
       setUser(res.data);
@@ -32,18 +33,21 @@ export default function UserDetailPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [id]);
 
-  useEffect(() => { fetchUser(); }, [id]);
+  useEffect(() => { fetchUser(); }, [fetchUser]);
 
   const handleToggleStatus = async () => {
     const newStatus = user.status === 'Active' ? 'Inactive' : 'Active';
+    setIsTogglingStatus(true);
     try {
       await updateUserStatus(id, { status: newStatus });
       toast.success('Status updated');
       fetchUser();
     } catch (err) {
       toast.error(err.message || 'Failed to update');
+    } finally {
+      setIsTogglingStatus(false);
     }
   };
 
@@ -82,7 +86,7 @@ export default function UserDetailPage() {
         title={`${user.firstName} ${user.lastName}`}
         actions={
           <div className="flex gap-2">
-            <Button variant={user.status === 'Active' ? 'danger' : 'primary'} onClick={handleToggleStatus}>
+            <Button variant={user.status === 'Active' ? 'danger' : 'primary'} onClick={handleToggleStatus} isLoading={isTogglingStatus}>
               {user.status === 'Active' ? 'Deactivate' : 'Activate'}
             </Button>
             {isAdmin && user.role?.name !== 'admin' && (

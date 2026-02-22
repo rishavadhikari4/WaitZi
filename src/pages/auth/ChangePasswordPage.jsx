@@ -8,7 +8,7 @@ import Button from '../../components/ui/Button';
 import PageHeader from '../../components/shared/PageHeader';
 
 // Defined OUTSIDE the page component so React keeps it stable across renders
-function PasswordField({ label, field, value, showKey, showState, onShowToggle, onChange, error, placeholder }) {
+function PasswordField({ label, value, showState, onShowToggle, onChange, error, placeholder }) {
   return (
     <div className="space-y-1">
       <label className="block text-sm font-medium text-slate-700">{label}</label>

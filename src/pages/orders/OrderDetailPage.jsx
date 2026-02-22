@@ -19,6 +19,9 @@ export default function OrderDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showCancel, setShowCancel] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [updatingItemId, setUpdatingItemId] = useState(null);
 
   const fetchOrder = useCallback(async () => {
     try {
@@ -45,26 +48,33 @@ export default function OrderDetailPage() {
   useSocket(socketRooms, socketEvents);
 
   const handleStatusChange = async (newStatus) => {
+    setIsUpdatingStatus(true);
     try {
       await updateOrderStatus(id, { status: newStatus });
       toast.success('Order status updated');
       fetchOrder();
     } catch (err) {
       toast.error(err.message || 'Failed to update status');
+    } finally {
+      setIsUpdatingStatus(false);
     }
   };
 
   const handleItemStatusChange = async (itemId, newStatus) => {
+    setUpdatingItemId(itemId);
     try {
       await updateOrderItemStatus(id, itemId, { status: newStatus });
       toast.success('Item status updated');
       fetchOrder();
     } catch (err) {
       toast.error(err.message || 'Failed to update item status');
+    } finally {
+      setUpdatingItemId(null);
     }
   };
 
   const handleCancel = async () => {
+    setIsCancelling(true);
     try {
       await cancelOrder(id, { reason: cancelReason });
       toast.success('Order cancelled');
@@ -72,6 +82,8 @@ export default function OrderDetailPage() {
       fetchOrder();
     } catch (err) {
       toast.error(err.message || 'Failed to cancel order');
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -106,15 +118,19 @@ export default function OrderDetailPage() {
                     <p className="text-xs text-slate-500">Qty: {item.quantity} {item.notes && `- ${item.notes}`}</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <select
-                      value={item.status}
-                      onChange={(e) => handleItemStatusChange(item._id || item._id, e.target.value)}
-                      className="text-xs border border-slate-200 rounded px-2 py-1"
-                    >
-                      {ORDER_ITEM_STATUSES.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
+                    <div className="flex items-center gap-1">
+                      {updatingItemId === item._id && <Spinner size="sm" />}
+                      <select
+                        value={item.status}
+                        onChange={(e) => handleItemStatusChange(item._id, e.target.value)}
+                        disabled={updatingItemId === item._id}
+                        className={`text-xs border border-slate-200 rounded px-2 py-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        {ORDER_ITEM_STATUSES.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </div>
                     <p className="font-medium text-sm w-20 text-right">
                       {formatCurrency(item.subtotal || item.menuItem?.price * item.quantity)}
                     </p>
@@ -145,11 +161,15 @@ export default function OrderDetailPage() {
           </div>
 
           <div className="card">
-            <h3 className="font-semibold mb-3">Update Status</h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold">Update Status</h3>
+              {isUpdatingStatus && <Spinner size="sm" />}
+            </div>
             <Select
               value={order.status}
               onChange={(e) => handleStatusChange(e.target.value)}
               options={ORDER_STATUSES.map((s) => ({ value: s, label: s }))}
+              disabled={isUpdatingStatus}
             />
           </div>
         </div>
@@ -159,6 +179,7 @@ export default function OrderDetailPage() {
         isOpen={showCancel}
         onClose={() => setShowCancel(false)}
         onConfirm={handleCancel}
+        isLoading={isCancelling}
         title="Cancel Order"
         message={
           <div className="space-y-3">

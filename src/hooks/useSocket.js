@@ -60,7 +60,8 @@ export default function useSocket(rooms = [], events = {}) {
         socket.emit('leave', rooms);
       }
     };
-  }, [rooms.join(',')]); // Re-subscribe when rooms change
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rooms.join(',')]); // Re-subscribe when rooms change (intentional serialization)
 
   return { isConnected };
 }

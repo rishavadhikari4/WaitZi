@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { getPayment, processRefund } from '../../api/payments';
@@ -21,7 +21,7 @@ export default function PaymentDetailPage() {
   const [refundData, setRefundData] = useState({ amount: '', reason: '' });
   const [isRefunding, setIsRefunding] = useState(false);
 
-  const fetchPayment = async () => {
+  const fetchPayment = useCallback(async () => {
     try {
       const res = await getPayment(id);
       setPayment(res.data);
@@ -30,9 +30,9 @@ export default function PaymentDetailPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [id]);
 
-  useEffect(() => { fetchPayment(); }, [id]);
+  useEffect(() => { fetchPayment(); }, [fetchPayment]);
 
   const handleRefund = async () => {
     setIsRefunding(true);

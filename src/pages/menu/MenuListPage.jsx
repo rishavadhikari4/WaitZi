@@ -13,6 +13,7 @@ import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Select from '../../components/ui/Select';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import Spinner from '../../components/ui/Spinner';
 import { formatCurrency } from '../../utils/formatters';
 
 export default function MenuListPage() {
@@ -27,6 +28,8 @@ export default function MenuListPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [deleteId, setDeleteId] = useState(null);
+  const [togglingId, setTogglingId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchItems = useCallback(async () => {
     setIsLoading(true);
@@ -51,16 +54,20 @@ export default function MenuListPage() {
 
   const handleToggleAvailability = async (item) => {
     const newStatus = item.availabilityStatus === 'Available' ? 'Out of Stock' : 'Available';
+    setTogglingId(item._id);
     try {
       await updateMenuAvailability(item._id, newStatus);
       toast.success(`Marked as ${newStatus}`);
       fetchItems();
     } catch (err) {
       toast.error(err.message || 'Failed to update');
+    } finally {
+      setTogglingId(null);
     }
   };
 
   const handleDelete = async () => {
+    setIsDeleting(true);
     try {
       await deleteMenuItem(deleteId);
       toast.success('Item deleted');
@@ -68,6 +75,8 @@ export default function MenuListPage() {
       fetchItems();
     } catch (err) {
       toast.error(err.message || 'Failed to delete');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -81,8 +90,12 @@ export default function MenuListPage() {
     { key: 'price', label: 'Price', sortable: true, render: (row) => formatCurrency(row.price) },
     {
       key: 'availabilityStatus', label: 'Status', render: (row) => (
-        <button onClick={(e) => { e.stopPropagation(); handleToggleAvailability(row); }}>
-          <Badge status={row.availabilityStatus} />
+        <button
+          onClick={(e) => { e.stopPropagation(); handleToggleAvailability(row); }}
+          disabled={togglingId === row._id}
+          className={togglingId === row._id ? 'opacity-50 cursor-not-allowed' : ''}
+        >
+          {togglingId === row._id ? <Spinner size="sm" /> : <Badge status={row.availabilityStatus} />}
         </button>
       )
     },
@@ -111,7 +124,7 @@ export default function MenuListPage() {
       </div>
       <DataTable columns={columns} data={items} isLoading={isLoading} emptyMessage="No menu items" />
       <Pagination {...pagination} onPageChange={setPage} />
-      <ConfirmDialog isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={handleDelete} title="Delete Item" message="Are you sure you want to delete this menu item?" confirmText="Delete" />
+      <ConfirmDialog isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={handleDelete} title="Delete Item" message="Are you sure you want to delete this menu item?" confirmText="Delete" isLoading={isDeleting} />
     </div>
   );
 }

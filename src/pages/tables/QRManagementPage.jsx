@@ -11,6 +11,9 @@ export default function QRManagementPage() {
   const [tables, setTables] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isGeneratingAll, setIsGeneratingAll] = useState(false);
+  const [generatingId, setGeneratingId] = useState(null);
+  const [downloadingId, setDownloadingId] = useState(null);
+  const [viewingAnalyticsId, setViewingAnalyticsId] = useState(null);
   const [qrImages, setQrImages] = useState({});
   const [analytics, setAnalytics] = useState({});
 
@@ -22,12 +25,15 @@ export default function QRManagementPage() {
   }, []);
 
   const handleGenerate = async (tableId) => {
+    setGeneratingId(tableId);
     try {
       const res = await generateQR(tableId);
       setQrImages((prev) => ({ ...prev, [tableId]: res.data?.qrCode || res.data }));
       toast.success('QR code generated');
     } catch (err) {
       toast.error(err.message || 'Failed to generate QR');
+    } finally {
+      setGeneratingId(null);
     }
   };
 
@@ -51,6 +57,7 @@ export default function QRManagementPage() {
   };
 
   const handleDownload = async (tableId, tableNumber) => {
+    setDownloadingId(tableId);
     try {
       const blob = await downloadQR(tableId);
       const url = window.URL.createObjectURL(blob instanceof Blob ? blob : new Blob([blob]));
@@ -61,15 +68,20 @@ export default function QRManagementPage() {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       toast.error(err.message || 'Failed to download QR');
+    } finally {
+      setDownloadingId(null);
     }
   };
 
   const handleViewAnalytics = async (tableId) => {
+    setViewingAnalyticsId(tableId);
     try {
       const res = await getQRAnalytics(tableId);
       setAnalytics((prev) => ({ ...prev, [tableId]: res.data }));
     } catch (err) {
       toast.error(err.message || 'Failed to load analytics');
+    } finally {
+      setViewingAnalyticsId(null);
     }
   };
 
@@ -102,14 +114,28 @@ export default function QRManagementPage() {
               </div>
             )}
             <div className="flex gap-2 justify-center">
-              <button onClick={() => handleGenerate(table._id)} className="btn-secondary text-sm px-3 py-1.5">
-                Generate
+              <button
+                onClick={() => handleGenerate(table._id)}
+                disabled={generatingId === table._id}
+                className={`btn-secondary text-sm px-3 py-1.5 flex items-center gap-1 ${generatingId === table._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {generatingId === table._id ? <Spinner size="sm" /> : null}
+                {generatingId === table._id ? 'Generating...' : 'Generate'}
               </button>
-              <button onClick={() => handleDownload(table._id, table.tableNumber)} className="btn-primary text-sm px-3 py-1.5 flex items-center gap-1">
-                <Download className="w-3.5 h-3.5" /> Download
+              <button
+                onClick={() => handleDownload(table._id, table.tableNumber)}
+                disabled={downloadingId === table._id}
+                className={`btn-primary text-sm px-3 py-1.5 flex items-center gap-1 ${downloadingId === table._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {downloadingId === table._id ? <Spinner size="sm" /> : <Download className="w-3.5 h-3.5" />}
+                {downloadingId === table._id ? 'Downloading...' : 'Download'}
               </button>
-              <button onClick={() => handleViewAnalytics(table._id)} className="btn-secondary text-sm px-3 py-1.5 flex items-center gap-1">
-                <BarChart3 className="w-3.5 h-3.5" />
+              <button
+                onClick={() => handleViewAnalytics(table._id)}
+                disabled={viewingAnalyticsId === table._id}
+                className={`btn-secondary text-sm px-3 py-1.5 flex items-center gap-1 ${viewingAnalyticsId === table._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {viewingAnalyticsId === table._id ? <Spinner size="sm" /> : <BarChart3 className="w-3.5 h-3.5" />}
               </button>
             </div>
             {analytics[table._id] && (

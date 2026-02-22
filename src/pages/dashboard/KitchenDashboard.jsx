@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Clock, ChefHat, CheckCircle2, Flame } from 'lucide-react';
 import { getKitchenQueue, updateOrderItemStatus } from '../../api/orders';
@@ -19,7 +19,7 @@ export default function KitchenDashboard() {
 
   const fetchQueue = useCallback(() => getKitchenQueue(), []);
   const { data: queueData, isLoading: queueLoading, refresh } = usePolling(fetchQueue, 30000);
-  const { data: realTime, refresh: refreshRealTime } = usePolling(() => getRealTimeStatus(), 30000);
+  const { refresh: refreshRealTime } = usePolling(() => getRealTimeStatus(), 30000);
 
   // Socket.IO for instant kitchen + dashboard updates
   const socketRooms = useMemo(() => ['kitchen', 'dashboard'], []);
@@ -33,20 +33,24 @@ export default function KitchenDashboard() {
   }), [refresh, refreshRealTime]);
   useSocket(socketRooms, socketEvents);
 
+  const [updatingItemId, setUpdatingItemId] = useState(null);
+
   const orders = queueData?.data || [];
-  const rtData = realTime?.data || {};
 
   const pendingItems = orders.reduce((sum, o) => sum + (o.items?.filter((i) => i.status === 'Pending').length || 0), 0);
   const cookingItems = orders.reduce((sum, o) => sum + (o.items?.filter((i) => i.status === 'Cooking').length || 0), 0);
   const readyItems = orders.reduce((sum, o) => sum + (o.items?.filter((i) => i.status === 'Ready').length || 0), 0);
 
   const handleItemStatus = async (orderId, itemId, newStatus) => {
+    setUpdatingItemId(itemId);
     try {
       await updateOrderItemStatus(orderId, itemId, { status: newStatus, cookedBy: user?._id });
       toast.success(`Marked as ${newStatus}`);
       refresh();
     } catch (err) {
       toast.error(err.message || 'Failed to update');
+    } finally {
+      setUpdatingItemId(null);
     }
   };
 
@@ -101,7 +105,7 @@ export default function KitchenDashboard() {
                 <div className="space-y-2">
                   {order.items?.map((item, i) => (
                     <div
-                      key={item._id || item._id || i}
+                      key={item._id || i}
                       className={`flex items-center justify-between p-2 rounded-lg ${
                         item.status === 'Pending'
                           ? 'bg-yellow-50'
@@ -123,18 +127,20 @@ export default function KitchenDashboard() {
                       <div className="flex items-center gap-2 ml-2">
                         {item.status === 'Pending' && (
                           <button
-                            onClick={() => handleItemStatus(order._id, item._id || item._id, 'Cooking')}
-                            className="px-3 py-1.5 bg-blue-600 text-white rounded-md text-xs font-medium hover:bg-blue-700 flex items-center gap-1"
+                            onClick={() => handleItemStatus(order._id, item._id, 'Cooking')}
+                            disabled={updatingItemId === item._id}
+                            className={`px-3 py-1.5 bg-blue-600 text-white rounded-md text-xs font-medium hover:bg-blue-700 flex items-center gap-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
                           >
-                            <Flame className="w-3.5 h-3.5" /> Cook
+                            {updatingItemId === item._id ? <Spinner size="sm" /> : <Flame className="w-3.5 h-3.5" />} Cook
                           </button>
                         )}
                         {item.status === 'Cooking' && (
                           <button
-                            onClick={() => handleItemStatus(order._id, item._id || item._id, 'Ready')}
-                            className="px-3 py-1.5 bg-green-600 text-white rounded-md text-xs font-medium hover:bg-green-700 flex items-center gap-1"
+                            onClick={() => handleItemStatus(order._id, item._id, 'Ready')}
+                            disabled={updatingItemId === item._id}
+                            className={`px-3 py-1.5 bg-green-600 text-white rounded-md text-xs font-medium hover:bg-green-700 flex items-center gap-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
                           >
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Done
+                            {updatingItemId === item._id ? <Spinner size="sm" /> : <CheckCircle2 className="w-3.5 h-3.5" />} Done
                           </button>
                         )}
                         {item.status === 'Ready' && (

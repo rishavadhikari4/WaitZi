@@ -56,8 +56,6 @@ import NotFoundPage from '../pages/errors/NotFoundPage';
 import UnauthorizedPage from '../pages/errors/UnauthorizedPage';
 
 const allStaff = ['admin'];
-const adminManager = ['admin'];
-const kitchenRoles = ['admin'];
 
 export default function AppRoutes() {
   return (

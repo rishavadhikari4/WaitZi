@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { Eye, EyeOff } from 'lucide-react';
 import { register } from '../../api/auth';
 import { getAllRoles } from '../../api/roles';
 import PageHeader from '../../components/shared/PageHeader';
@@ -20,6 +21,8 @@ export default function UserFormPage() {
   const [roles, setRoles] = useState([]);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     getAllRoles()
@@ -90,8 +93,46 @@ export default function UserFormPage() {
           <Input label="Last Name" value={form.lastName} onChange={set('lastName')} error={errors.lastName} placeholder="e.g. Sharma" />
         </div>
         <Input label="Email" type="email" value={form.email} onChange={set('email')} error={errors.email} placeholder="you@example.com" />
-        <Input label="Password" type="password" value={form.password} onChange={set('password')} error={errors.password} placeholder="Min 6 chars, uppercase, lowercase, number" />
-        <Input label="Confirm Password" type="password" value={form.confirmPassword} onChange={set('confirmPassword')} error={errors.confirmPassword} />
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-slate-700">Password</label>
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={form.password}
+              onChange={set('password')}
+              placeholder="Min 6 chars, uppercase, lowercase, number"
+              className={`input w-full pr-10 ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((p) => !p)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+          {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
+        </div>
+        <div className="space-y-1">
+          <label className="block text-sm font-medium text-slate-700">Confirm Password</label>
+          <div className="relative">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              value={form.confirmPassword}
+              onChange={set('confirmPassword')}
+              placeholder="Re-enter password"
+              className={`input w-full pr-10 ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((p) => !p)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+            >
+              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+          {errors.confirmPassword && <p className="text-sm text-red-600">{errors.confirmPassword}</p>}
+        </div>
         <Input label="Phone" value={form.number} onChange={set('number')} error={errors.number} placeholder="e.g. 9812345678" />
         <Input label="Address" value={form.address} onChange={set('address')} error={errors.address} placeholder="e.g. Kathmandu, Nepal" />
         <Select

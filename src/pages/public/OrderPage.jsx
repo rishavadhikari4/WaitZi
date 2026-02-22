@@ -27,6 +27,7 @@ export default function OrderPage() {
           : await getOrderingPageByNumber(tableNumber);
         const resData = res.data;
 
+        // eslint-disable-next-line no-unused-vars
         const categories = (resData.menu || []).map(({ items, ...cat }) => cat);
         const menuItems = (resData.menu || []).flatMap((cat) =>
           (cat.items || []).map((item) => ({
@@ -44,6 +45,7 @@ export default function OrderPage() {
       }
     };
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tableNumber, tableId]);
 
   if (isLoading) {

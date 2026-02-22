@@ -11,6 +11,7 @@ import SearchInput from '../../components/shared/SearchInput';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Select from '../../components/ui/Select';
+import Spinner from '../../components/ui/Spinner';
 
 export default function UserListPage() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export default function UserListPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [togglingUserId, setTogglingUserId] = useState(null);
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -42,12 +44,15 @@ export default function UserListPage() {
 
   const handleToggleStatus = async (userId, currentStatus) => {
     const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+    setTogglingUserId(userId);
     try {
       await updateUserStatus(userId, { status: newStatus });
       toast.success(`User ${newStatus === 'Active' ? 'activated' : 'deactivated'}`);
       fetchUsers();
     } catch (err) {
       toast.error(err.message || 'Failed to update status');
+    } finally {
+      setTogglingUserId(null);
     }
   };
 
@@ -66,8 +71,12 @@ export default function UserListPage() {
     { key: 'role', label: 'Role', render: (row) => <span className="capitalize">{row.role?.name || '-'}</span> },
     {
       key: 'status', label: 'Status', render: (row) => (
-        <button onClick={(e) => { e.stopPropagation(); handleToggleStatus(row._id, row.status); }}>
-          <Badge status={row.status} />
+        <button
+          onClick={(e) => { e.stopPropagation(); handleToggleStatus(row._id, row.status); }}
+          disabled={togglingUserId === row._id}
+          className={togglingUserId === row._id ? 'opacity-50 cursor-not-allowed' : ''}
+        >
+          {togglingUserId === row._id ? <Spinner size="sm" /> : <Badge status={row.status} />}
         </button>
       )
     },

@@ -1,5 +1,6 @@
 import { InboxIcon } from 'lucide-react';
 
+// eslint-disable-next-line no-unused-vars
 export default function EmptyState({ icon: Icon = InboxIcon, title = 'No data', message }) {
   return (
     <div className="flex flex-col items-center justify-center py-12">

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { Clock, ChefHat, UtensilsCrossed, MapPin, Plus, Banknote, Wallet } from 'lucide-react';
 import { getOrdersByTable } from '../../api/orders';
@@ -29,7 +29,7 @@ const statusLabels = {
   Cancelled: { text: 'Cancelled', bg: 'bg-red-100', fg: 'text-red-700' },
 };
 
-function PaymentSection({ order, tableNumber }) {
+function PaymentSection({ order }) {
   const [showCashMsg, setShowCashMsg] = useState(false);
   const [isKhaltiLoading, setIsKhaltiLoading] = useState(false);
   const [khaltiError, setKhaltiError] = useState('');

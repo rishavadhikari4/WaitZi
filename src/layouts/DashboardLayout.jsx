@@ -25,7 +25,7 @@ function playTing() {
     schedule(880, 0, 0.5);    // first ting  — A5
     schedule(1108, 0.28, 0.6); // second ting — C#6
     setTimeout(() => ctx.close(), 1200);
-  } catch (_) {}
+  } catch { /* ignore audio context errors */ }
 }
 
 function OrderToast({ t, table, customer, items, onView }) {

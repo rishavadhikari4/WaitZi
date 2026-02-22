@@ -217,7 +217,6 @@ function SalesTab({ data }) {
   if (!data) return <p className="text-slate-400 text-center py-10">No data available</p>;
 
   const summary = data.summary || {};
-  const trends = data.trends || [];
   const paymentMethods = data.breakdowns?.paymentMethods || [];
   const hourly = data.breakdowns?.hourlyDistribution || [];
   const topCustomers = data.customers || [];

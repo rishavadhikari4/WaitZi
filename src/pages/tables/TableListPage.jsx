@@ -25,6 +25,8 @@ export default function TableListPage() {
   const [filter, setFilter] = useState('');
   const [deleteId, setDeleteId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [togglingTableId, setTogglingTableId] = useState(null);
+  const [clearingTableId, setClearingTableId] = useState(null);
 
   const fetchTables = useCallback(async () => {
     setIsLoading(true);
@@ -44,22 +46,28 @@ export default function TableListPage() {
   useEffect(() => { fetchTables(); }, [fetchTables]);
 
   const handleStatusChange = async (tableId, newStatus) => {
+    setTogglingTableId(tableId);
     try {
       await updateTableStatus(tableId, { status: newStatus });
       toast.success('Table status updated');
       fetchTables();
     } catch (err) {
       toast.error(err.message || 'Failed to update');
+    } finally {
+      setTogglingTableId(null);
     }
   };
 
   const handleClear = async (tableId) => {
+    setClearingTableId(tableId);
     try {
       await clearTable(tableId);
       toast.success('Table cleared');
       fetchTables();
     } catch (err) {
       toast.error(err.message || 'Failed to clear table');
+    } finally {
+      setClearingTableId(null);
     }
   };
 
@@ -111,16 +119,27 @@ export default function TableListPage() {
             {table.assignedWaiter && (
               <p className="text-sm text-slate-500">Waiter: {table.assignedWaiter.firstName} {table.assignedWaiter.lastName}</p>
             )}
-            <div className="mt-3 flex gap-2">
-              <select
-                value={table.status}
-                onChange={(e) => handleStatusChange(table._id, e.target.value)}
-                className="text-xs border border-slate-200 rounded px-2 py-1 flex-1"
-              >
-                {TABLE_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
+            <div className="mt-3 flex gap-2 items-center">
+              <div className="flex items-center gap-1 flex-1">
+                {togglingTableId === table._id && <Spinner size="sm" />}
+                <select
+                  value={table.status}
+                  onChange={(e) => handleStatusChange(table._id, e.target.value)}
+                  disabled={togglingTableId === table._id}
+                  className={`text-xs border border-slate-200 rounded px-2 py-1 flex-1 ${togglingTableId === table._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {TABLE_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
               {table.status === 'Occupied' && (
-                <button onClick={() => handleClear(table._id)} className="text-xs text-red-600 hover:underline">Clear</button>
+                <button
+                  onClick={() => handleClear(table._id)}
+                  disabled={clearingTableId === table._id}
+                  className={`text-xs text-red-600 hover:underline flex items-center gap-1 ${clearingTableId === table._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {clearingTableId === table._id && <Spinner size="sm" />}
+                  Clear
+                </button>
               )}
             </div>
             {canManage && (

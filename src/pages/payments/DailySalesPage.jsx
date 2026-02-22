@@ -15,7 +15,7 @@ export default function DailySalesPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
+    setIsLoading(true); // eslint-disable-line react-hooks/set-state-in-effect
     getDailySales({ date })
       .then((res) => setData(res.data))
       .catch((err) => toast.error(err.message || 'Failed to load sales data'))
