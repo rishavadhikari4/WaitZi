@@ -45,7 +45,7 @@ export default function RealTimePage() {
         <StatsCard title="Kitchen Queue" value={stats.kitchenQueue ?? 0} icon={ChefHat} />
         <StatsCard title="Available Tables" value={stats.availableTables ?? 0} icon={UtensilsCrossed} />
         <StatsCard title="Occupied Tables" value={stats.occupiedTables ?? 0} icon={UtensilsCrossed} />
-        <StatsCard title="Today's Revenue" value={formatCurrency(stats.totalRevenue ?? 0)} icon={DollarSign} />
+        <StatsCard title="Today's Revenue" value={formatCurrency(stats.totalRevenue ?? 0)} icon="Rs" />
         <StatsCard title="Staff On Duty" value={stats.staffOnDuty ?? 0} icon={Users} />
       </div>
     </div>
