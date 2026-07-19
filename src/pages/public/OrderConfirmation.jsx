@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { CheckCircle, ClipboardList, UtensilsCrossed } from 'lucide-react';
+import { Icon } from '@iconify/react';
 
 export default function OrderConfirmation() {
   const { tableNumber } = useParams();
@@ -9,7 +9,7 @@ export default function OrderConfirmation() {
       {/* Success animation circle */}
       <div className="relative inline-block">
         <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto animate-[pulse_2s_ease-in-out_1]">
-          <CheckCircle className="w-14 h-14 text-blue-600" />
+          <Icon icon="mdi:check-circle" className="w-14 h-14 text-blue-600" />
         </div>
         <div className="absolute inset-0 w-24 h-24 bg-blue-200/50 rounded-full mx-auto animate-ping" style={{ animationIterationCount: 2 }} />
       </div>
@@ -26,13 +26,13 @@ export default function OrderConfirmation() {
         <p className="text-xs text-gray-400">What would you like to do next?</p>
         <Link to={`/order/table/${tableNumber}/track`}>
           <button className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-3 rounded-xl font-semibold shadow-md shadow-blue-300/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
-            <ClipboardList className="w-4.5 h-4.5" />
+            <Icon icon="mdi:clipboard-list-outline" className="w-4.5 h-4.5" />
             Track Your Order
           </button>
         </Link>
         <Link to={`/order/table/${tableNumber}`}>
           <button className="w-full mt-2 bg-white text-blue-600 border-2 border-blue-200 hover:bg-blue-50 py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
-            <UtensilsCrossed className="w-4.5 h-4.5" />
+            <Icon icon="mdi:silverware-fork-knife" className="w-4.5 h-4.5" />
             Order More
           </button>
         </Link>

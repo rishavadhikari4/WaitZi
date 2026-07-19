@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import Spinner from '../components/ui/Spinner';
+import LogoLoader from '../components/ui/LogoLoader';
 
 export default function ProtectedRoute({ allowedRoles, children }) {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -8,7 +8,7 @@ export default function ProtectedRoute({ allowedRoles, children }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Spinner size="lg" />
+        <LogoLoader size="lg" />
       </div>
     );
   }

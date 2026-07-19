@@ -7,7 +7,7 @@ import PageHeader from '../../components/shared/PageHeader';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonForm } from '../../components/ui/Skeleton';
 
 export default function TableFormPage() {
   const { id } = useParams();
@@ -67,7 +67,7 @@ export default function TableFormPage() {
     }
   };
 
-  if (isFetching) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+  if (isFetching) return <div className="max-w-md"><SkeletonForm fields={3} /></div>;
 
   return (
     <div className="max-w-md">

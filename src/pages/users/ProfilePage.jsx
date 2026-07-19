@@ -6,7 +6,7 @@ import PageHeader from '../../components/shared/PageHeader';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import FileUpload from '../../components/shared/FileUpload';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonForm } from '../../components/ui/Skeleton';
 
 const LETTERS_ONLY = /^[a-zA-Z\s]+$/;
 const PHONE_RE = /^(\+977)?9[78]\d{8}$/;
@@ -73,7 +73,7 @@ export default function ProfilePage() {
     }
   };
 
-  if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+  if (isLoading) return <div className="max-w-2xl"><SkeletonForm fields={4} /></div>;
 
   return (
     <div className="max-w-2xl">

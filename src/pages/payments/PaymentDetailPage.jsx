@@ -7,7 +7,7 @@ import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
 import Input from '../../components/ui/Input';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonDetail } from '../../components/ui/Skeleton';
 import useAuth from '../../hooks/useAuth';
 import { formatDateTime, formatCurrency } from '../../utils/formatters';
 import { PAYMENT_METHOD_COLORS } from '../../utils/constants';
@@ -48,8 +48,8 @@ export default function PaymentDetailPage() {
     }
   };
 
-  if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
-  if (!payment) return <p className="text-center py-20 text-slate-500">Payment not found</p>;
+  if (isLoading) return <div className="max-w-2xl"><SkeletonDetail rows={7} /></div>;
+  if (!payment) return <p className="text-center py-20 text-gray-500">Payment not found</p>;
 
   const canRefund = user?.role?.name === 'admin' && payment.paymentStatus === 'Paid';
 
@@ -61,13 +61,13 @@ export default function PaymentDetailPage() {
       />
       <div className="card space-y-4">
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div><span className="text-slate-500">Status</span><div className="mt-1"><Badge status={payment.paymentStatus} /></div></div>
-          <div><span className="text-slate-500">Method</span><div className="mt-1"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PAYMENT_METHOD_COLORS[payment.paymentMethod]?.badge || 'bg-slate-100 text-slate-800'}`}>{payment.paymentMethod}</span></div></div>
-          <div><span className="text-slate-500">Amount</span><p className="font-medium mt-1">{formatCurrency(payment.amount)}</p></div>
-          <div><span className="text-slate-500">Transaction ID</span><p className="font-medium mt-1">{payment.transactionId || '-'}</p></div>
-          <div><span className="text-slate-500">Order</span><p className="font-medium mt-1">#{(payment.order?._id || payment.order)?.slice(-6)}</p></div>
-          <div><span className="text-slate-500">Time</span><p className="font-medium mt-1">{payment.paymentTime ? formatDateTime(payment.paymentTime) : '-'}</p></div>
-          <div><span className="text-slate-500">Handled By</span><p className="font-medium mt-1">{payment.handledBy ? `${payment.handledBy.firstName} ${payment.handledBy.lastName}` : '-'}</p></div>
+          <div><span className="text-gray-500">Status</span><div className="mt-1"><Badge status={payment.paymentStatus} /></div></div>
+          <div><span className="text-gray-500">Method</span><div className="mt-1"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PAYMENT_METHOD_COLORS[payment.paymentMethod]?.badge || 'bg-gray-100 text-gray-800'}`}>{payment.paymentMethod}</span></div></div>
+          <div><span className="text-gray-500">Amount</span><p className="font-medium mt-1">{formatCurrency(payment.amount)}</p></div>
+          <div><span className="text-gray-500">Transaction ID</span><p className="font-medium mt-1">{payment.transactionId || '-'}</p></div>
+          <div><span className="text-gray-500">Order</span><p className="font-medium mt-1">#{(payment.order?._id || payment.order)?.slice(-6)}</p></div>
+          <div><span className="text-gray-500">Time</span><p className="font-medium mt-1">{payment.paymentTime ? formatDateTime(payment.paymentTime) : '-'}</p></div>
+          <div><span className="text-gray-500">Handled By</span><p className="font-medium mt-1">{payment.handledBy ? `${payment.handledBy.firstName} ${payment.handledBy.lastName}` : '-'}</p></div>
         </div>
       </div>
 

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Eye, EyeOff } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { resetPassword, validateResetToken } from '../../api/password';
 import Button from '../../components/ui/Button';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonForm } from '../../components/ui/Skeleton';
 
 export default function ResetPasswordPage() {
   const { token } = useParams();
@@ -54,18 +54,14 @@ export default function ResetPasswordPage() {
   };
 
   if (isValidating) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner size="lg" />
-      </div>
-    );
+    return <SkeletonForm fields={2} />;
   }
 
   if (!isTokenValid) {
     return (
       <div className="space-y-4 text-center">
         <h2 className="text-xl font-semibold">Invalid Reset Link</h2>
-        <p className="text-slate-500">This password reset link is invalid or has expired.</p>
+        <p className="text-gray-500">This password reset link is invalid or has expired.</p>
         <Link to="/forgot-password" className="text-black hover:underline text-sm">
           Request a new reset link
         </Link>
@@ -79,7 +75,7 @@ export default function ResetPasswordPage() {
 
       {/* New Password */}
       <div className="space-y-1">
-        <label className="block text-sm font-medium text-slate-700">New Password</label>
+        <label className="block text-sm font-medium text-gray-700">New Password</label>
         <div className="relative">
           <input
             type={showNew ? 'text' : 'password'}
@@ -89,8 +85,8 @@ export default function ResetPasswordPage() {
             className={`input w-full pr-10 ${errors.newPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
           />
           <button type="button" onClick={() => setShowNew(!showNew)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700">
-            {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+            {showNew ? <Icon icon="mdi:eye-off-outline" width={18} /> : <Icon icon="mdi:eye-outline" width={18} />}
           </button>
         </div>
         {errors.newPassword && <p className="text-sm text-red-600">{errors.newPassword}</p>}
@@ -98,7 +94,7 @@ export default function ResetPasswordPage() {
 
       {/* Confirm Password */}
       <div className="space-y-1">
-        <label className="block text-sm font-medium text-slate-700">Confirm Password</label>
+        <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
         <div className="relative">
           <input
             type={showConfirm ? 'text' : 'password'}
@@ -108,8 +104,8 @@ export default function ResetPasswordPage() {
             className={`input w-full pr-10 ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
           />
           <button type="button" onClick={() => setShowConfirm(!showConfirm)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700">
-            {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+            {showConfirm ? <Icon icon="mdi:eye-off-outline" width={18} /> : <Icon icon="mdi:eye-outline" width={18} />}
           </button>
         </div>
         {errors.confirmPassword && <p className="text-sm text-red-600">{errors.confirmPassword}</p>}

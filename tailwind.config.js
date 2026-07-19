@@ -6,6 +6,11 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
+      colors: {
+        app: '#F4F6F9',
+        sidebar: '#1E2229',
+        'sidebar-hover': '#282D36',
+      },
     },
   },
   plugins: [],

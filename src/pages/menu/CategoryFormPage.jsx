@@ -7,7 +7,7 @@ import Input from '../../components/ui/Input';
 import TextArea from '../../components/ui/TextArea';
 import Button from '../../components/ui/Button';
 import FileUpload from '../../components/shared/FileUpload';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonForm } from '../../components/ui/Skeleton';
 
 export default function CategoryFormPage() {
   const { id } = useParams();
@@ -60,7 +60,7 @@ export default function CategoryFormPage() {
     }
   };
 
-  if (isFetching) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+  if (isFetching) return <div className="max-w-2xl"><SkeletonForm fields={2} /></div>;
 
   return (
     <div className="max-w-2xl">

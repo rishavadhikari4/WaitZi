@@ -9,7 +9,7 @@ import TextArea from '../../components/ui/TextArea';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import FileUpload from '../../components/shared/FileUpload';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonForm } from '../../components/ui/Skeleton';
 import { AVAILABILITY_STATUSES } from '../../utils/constants';
 
 export default function MenuFormPage() {
@@ -67,7 +67,7 @@ export default function MenuFormPage() {
     }
   };
 
-  if (isFetching) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+  if (isFetching) return <div className="max-w-2xl"><SkeletonForm fields={5} /></div>;
 
   return (
     <div className="max-w-2xl">

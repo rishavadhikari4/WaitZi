@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Eye, EyeOff } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import useAuth from '../../hooks/useAuth';
-import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 
 export default function LoginPage() {
@@ -41,41 +40,55 @@ export default function LoginPage() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-xl font-semibold text-center">Staff Login</h2>
-      <Input
-        label="Email"
-        type="email"
-        value={email}
-        onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors((p) => ({ ...p, email: '' })); }}
-        placeholder="you@restaurant.com"
-        error={errors.email}
-      />
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="text-center">
+        <h2 className="text-xl font-semibold text-gray-900">Welcome back</h2>
+        <p className="text-sm text-gray-500 mt-1">Sign in to manage your restaurant</p>
+      </div>
+
       <div className="space-y-1">
-        <label className="block text-sm font-medium text-slate-700">Password</label>
+        <label className="block text-sm font-medium text-gray-700">Email</label>
         <div className="relative">
+          <Icon icon="mdi:email-outline" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors((p) => ({ ...p, email: '' })); }}
+            placeholder="you@restaurant.com"
+            className={`input w-full pl-10 ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
+          />
+        </div>
+        {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
+      </div>
+
+      <div className="space-y-1">
+        <label className="block text-sm font-medium text-gray-700">Password</label>
+        <div className="relative">
+          <Icon icon="mdi:lock-outline" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type={showPassword ? 'text' : 'password'}
             value={password}
             onChange={(e) => { setPassword(e.target.value); if (errors.password) setErrors((p) => ({ ...p, password: '' })); }}
             placeholder="Enter password"
-            className={`input w-full pr-10 ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
+            className={`input w-full pl-10 pr-10 ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
           >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            {showPassword ? <Icon icon="mdi:eye-off-outline" width={18} /> : <Icon icon="mdi:eye-outline" width={18} />}
           </button>
         </div>
         {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
       </div>
-      <Button type="submit" isLoading={isLoading} className="w-full">
+
+      <Button type="submit" isLoading={isLoading} className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-md shadow-blue-200">
         Sign In
       </Button>
-      <p className="text-center text-sm text-slate-500">
-        <Link to="/forgot-password" className="text-black hover:underline">
+
+      <p className="text-center text-sm text-gray-500">
+        <Link to="/forgot-password" className="text-blue-600 font-medium hover:text-blue-700 hover:underline">
           Forgot password?
         </Link>
       </p>

@@ -55,7 +55,18 @@ export default function OrderListPage() {
     { key: 'customerName', label: 'Customer', sortable: true },
     { key: 'items', label: 'Items', render: (row) => row.items?.length ?? 0 },
     { key: 'finalAmount', label: 'Amount', sortable: true, render: (row) => formatCurrency(row.finalAmount || row.totalAmount) },
-    { key: 'status', label: 'Status', render: (row) => <Badge status={row.status} /> },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (row) => (
+        <div className="flex items-center gap-1.5">
+          {row.isPrepaid && row.status !== 'Paid' && (
+            <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800">Prepaid</span>
+          )}
+          <Badge status={row.status} />
+        </div>
+      ),
+    },
     { key: 'createdAt', label: 'Created', sortable: true, render: (row) => formatDateTime(row.createdAt) },
   ];
 

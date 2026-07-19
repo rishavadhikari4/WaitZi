@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { ShoppingBag } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import Sidebar from '../components/shared/Sidebar';
 import Header from '../components/shared/Header';
 import useSocket from '../hooks/useSocket';
@@ -31,24 +31,24 @@ function playTing() {
 function OrderToast({ t, table, customer, items, onView }) {
   return (
     <div
-      className={`${t.visible ? 'animate-enter' : 'animate-leave'} flex items-start gap-3 bg-white border-l-4 border-indigo-500 rounded-xl shadow-xl px-4 py-3 w-72 cursor-pointer`}
+      className={`${t.visible ? 'animate-enter' : 'animate-leave'} flex items-start gap-3 bg-white border-l-4 border-blue-500 rounded-xl shadow-xl px-4 py-3 w-72 cursor-pointer`}
       onClick={onView}
     >
-      <div className="w-9 h-9 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-        <ShoppingBag className="w-4 h-4 text-indigo-600" />
+      <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+        <Icon icon="mdi:shopping-outline" className="w-4 h-4 text-blue-600" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-slate-900 text-sm">New Order!</p>
-        <p className="text-xs text-slate-500 truncate">
+        <p className="font-semibold text-gray-900 text-sm">New Order!</p>
+        <p className="text-xs text-gray-500 truncate">
           Table {table} &middot; {customer}
         </p>
         {items > 0 && (
-          <p className="text-xs text-indigo-500 font-medium mt-0.5">{items} item{items !== 1 ? 's' : ''}</p>
+          <p className="text-xs text-blue-500 font-medium mt-0.5">{items} item{items !== 1 ? 's' : ''}</p>
         )}
       </div>
       <button
         onClick={(e) => { e.stopPropagation(); toast.dismiss(t.id); }}
-        className="text-slate-300 hover:text-slate-500 text-lg leading-none mt-0.5 flex-shrink-0"
+        className="text-gray-300 hover:text-gray-500 text-lg leading-none mt-0.5 flex-shrink-0"
         aria-label="Dismiss"
       >
         ×
@@ -93,7 +93,7 @@ export default function DashboardLayout() {
   useSocket(socketRooms, socketEvents);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-app">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="lg:ml-64">
         <Header onMenuClick={() => setSidebarOpen(true)} />

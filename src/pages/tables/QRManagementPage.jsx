@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { Download, QrCode, BarChart3 } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { getAllTables } from '../../api/tables';
 import { generateQR, downloadQR, generateAllQRs, getQRAnalytics } from '../../api/qr';
 import PageHeader from '../../components/shared/PageHeader';
 import Button from '../../components/ui/Button';
 import Spinner from '../../components/ui/Spinner';
+import { SkeletonCardGrid } from '../../components/ui/Skeleton';
 
 export default function QRManagementPage() {
   const [tables, setTables] = useState([]);
@@ -85,7 +86,7 @@ export default function QRManagementPage() {
     }
   };
 
-  if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+  if (isLoading) return <SkeletonCardGrid count={8} media />;
 
   return (
     <div>
@@ -94,7 +95,7 @@ export default function QRManagementPage() {
         subtitle="Generate and download QR codes for tables"
         actions={
           <Button onClick={handleGenerateAll} isLoading={isGeneratingAll}>
-            <QrCode className="w-4 h-4 mr-1" /> Generate All
+            <Icon icon="mdi:qrcode" className="w-4 h-4 mr-1" /> Generate All
           </Button>
         }
       />
@@ -106,11 +107,11 @@ export default function QRManagementPage() {
               <img
                 src={typeof qrImages[table._id] === 'string' ? qrImages[table._id] : ''}
                 alt={`QR Table ${table.tableNumber}`}
-                className="w-40 h-40 mx-auto mb-3 border border-slate-200 rounded"
+                className="w-40 h-40 mx-auto mb-3 border border-gray-200 rounded"
               />
             ) : (
-              <div className="w-40 h-40 mx-auto mb-3 border-2 border-dashed border-slate-200 rounded flex items-center justify-center">
-                <QrCode className="w-10 h-10 text-gray-300" />
+              <div className="w-40 h-40 mx-auto mb-3 border-2 border-dashed border-gray-200 rounded flex items-center justify-center">
+                <Icon icon="mdi:qrcode" className="w-10 h-10 text-gray-300" />
               </div>
             )}
             <div className="flex gap-2 justify-center">
@@ -127,7 +128,7 @@ export default function QRManagementPage() {
                 disabled={downloadingId === table._id}
                 className={`btn-primary text-sm px-3 py-1.5 flex items-center gap-1 ${downloadingId === table._id ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                {downloadingId === table._id ? <Spinner size="sm" /> : <Download className="w-3.5 h-3.5" />}
+                {downloadingId === table._id ? <Spinner size="sm" /> : <Icon icon="mdi:download" className="w-3.5 h-3.5" />}
                 {downloadingId === table._id ? 'Downloading...' : 'Download'}
               </button>
               <button
@@ -135,11 +136,11 @@ export default function QRManagementPage() {
                 disabled={viewingAnalyticsId === table._id}
                 className={`btn-secondary text-sm px-3 py-1.5 flex items-center gap-1 ${viewingAnalyticsId === table._id ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                {viewingAnalyticsId === table._id ? <Spinner size="sm" /> : <BarChart3 className="w-3.5 h-3.5" />}
+                {viewingAnalyticsId === table._id ? <Spinner size="sm" /> : <Icon icon="mdi:chart-bar" className="w-3.5 h-3.5" />}
               </button>
             </div>
             {analytics[table._id] && (
-              <div className="mt-3 pt-3 border-t border-slate-200 text-xs text-slate-600 space-y-1">
+              <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-600 space-y-1">
                 <div className="flex justify-between"><span>Total Scans</span><span className="font-medium">{analytics[table._id].totalScans ?? 0}</span></div>
                 <div className="flex justify-between"><span>Orders via QR</span><span className="font-medium">{analytics[table._id].totalOrders ?? 0}</span></div>
                 {analytics[table._id].lastScanned && (

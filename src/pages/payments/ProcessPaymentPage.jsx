@@ -8,7 +8,7 @@ import PageHeader from '../../components/shared/PageHeader';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonDetail, SkeletonForm } from '../../components/ui/Skeleton';
 import { formatCurrency } from '../../utils/formatters';
 import { PAYMENT_METHODS } from '../../utils/constants';
 
@@ -50,8 +50,27 @@ export default function ProcessPaymentPage() {
     }
   };
 
-  if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
-  if (!order) return <p className="text-center py-20 text-slate-500">Order not found</p>;
+  if (isLoading) {
+    return (
+      <div className="max-w-lg space-y-6">
+        <SkeletonDetail rows={4} />
+        <SkeletonForm fields={2} />
+      </div>
+    );
+  }
+  if (!order) return <p className="text-center py-20 text-gray-500">Order not found</p>;
+
+  if (order.isPrepaid && order.status !== 'Paid') {
+    return (
+      <div className="max-w-lg">
+        <PageHeader title="Process Payment" />
+        <div className="card text-center py-10">
+          <p className="font-semibold text-emerald-700">This order was already paid online at checkout.</p>
+          <p className="text-sm text-gray-500 mt-1">No further payment is needed - it'll finish automatically once served.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-lg">
@@ -66,7 +85,7 @@ export default function ProcessPaymentPage() {
               <span>{formatCurrency(item.subtotal || item.menuItem?.price * item.quantity)}</span>
             </div>
           ))}
-          <div className="border-t border-slate-200 pt-2 mt-2">
+          <div className="border-t border-gray-200 pt-2 mt-2">
             <div className="flex justify-between"><span>Subtotal</span><span>{formatCurrency(order.totalAmount)}</span></div>
             {order.discount > 0 && <div className="flex justify-between text-red-600"><span>Discount</span><span>-{formatCurrency(order.discount)}</span></div>}
             <div className="flex justify-between font-bold text-lg mt-1"><span>Total</span><span>{formatCurrency(order.finalAmount || order.totalAmount)}</span></div>

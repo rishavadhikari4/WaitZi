@@ -4,33 +4,44 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased m-0;
+    @apply bg-app text-gray-900 font-sans antialiased m-0;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm hover:bg-indigo-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-secondary {
-    @apply bg-white text-slate-700 px-4 py-2 rounded-md text-sm font-medium border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors duration-200;
+    @apply bg-white text-gray-700 px-4 py-2 rounded-md text-sm font-medium border border-gray-200 shadow-sm hover:bg-gray-50 transition-colors duration-200;
   }
   .btn-danger {
-    @apply bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm hover:bg-red-700 transition-colors duration-200;
+    @apply bg-red-500 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm hover:bg-red-600 transition-colors duration-200;
   }
   .card {
-    @apply bg-white border border-slate-200 rounded-lg p-5 shadow-sm;
+    @apply bg-white border border-gray-200 rounded-lg p-5 shadow-sm;
   }
   .input {
-    @apply w-full px-3 py-2 border border-slate-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder:text-slate-400 transition-colors;
+    @apply w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-gray-400 transition-colors;
   }
   .tab-group {
-    @apply flex gap-1 bg-slate-100 rounded-lg p-1;
+    @apply flex gap-1 bg-gray-100 rounded-lg p-1;
   }
   .tab-button {
-    @apply px-3 py-1.5 rounded-md text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors;
+    @apply px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors;
   }
   .tab-button-active {
-    @apply bg-white text-slate-900 shadow-sm;
+    @apply bg-white text-gray-900 shadow-sm;
+  }
+}
+
+@layer utilities {
+  @keyframes bow-pulse {
+    0%, 100% { transform: scaleX(0.08); opacity: 0.35; }
+    50% { transform: scaleX(1); opacity: 1; }
+  }
+  @keyframes knot-pulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
   }
 }

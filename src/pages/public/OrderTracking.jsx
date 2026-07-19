@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
-import { Clock, ChefHat, UtensilsCrossed, MapPin, Plus, Banknote, Wallet } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { getOrdersByTable } from '../../api/orders';
 import { initiateKhaltiPayment } from '../../api/payments';
 import { getOrderingPageByNumber } from '../../api/qr';
@@ -8,12 +8,13 @@ import usePolling from '../../hooks/usePolling';
 import useSocket from '../../hooks/useSocket';
 import useCart from '../../hooks/useCart';
 import Spinner from '../../components/ui/Spinner';
+import { Skeleton } from '../../components/ui/Skeleton';
 import { formatCurrency, formatTime } from '../../utils/formatters';
 
 const statusSteps = [
-  { key: 'Pending', label: 'Received', icon: Clock, color: 'blue' },
-  { key: 'InKitchen', label: 'Preparing', icon: ChefHat, color: 'blue' },
-  { key: 'Served', label: 'Served', icon: UtensilsCrossed, color: 'blue' },
+  { key: 'Pending', label: 'Received', icon: 'mdi:clock-outline', color: 'blue' },
+  { key: 'InKitchen', label: 'Preparing', icon: 'mdi:chef-hat', color: 'blue' },
+  { key: 'Served', label: 'Served', icon: 'mdi:silverware-fork-knife', color: 'blue' },
 ];
 
 const statusIndex = { Pending: 0, InKitchen: 1, Cooking: 1, Ready: 1, Served: 2, Completed: 2, Paid: 2 };
@@ -22,8 +23,8 @@ const statusLabels = {
   Pending: { text: 'Order Received', bg: 'bg-blue-100', fg: 'text-blue-700' },
   InKitchen: { text: 'Being Prepared', bg: 'bg-amber-100', fg: 'text-amber-700' },
   Cooking: { text: 'Cooking', bg: 'bg-orange-100', fg: 'text-orange-700' },
-  Ready: { text: 'Ready', bg: 'bg-green-100', fg: 'text-green-700' },
-  Served: { text: 'Served', bg: 'bg-green-100', fg: 'text-green-700' },
+  Ready: { text: 'Ready', bg: 'bg-emerald-100', fg: 'text-emerald-700' },
+  Served: { text: 'Served', bg: 'bg-emerald-100', fg: 'text-emerald-700' },
   Completed: { text: 'Completed', bg: 'bg-gray-100', fg: 'text-gray-700' },
   Paid: { text: 'Paid', bg: 'bg-blue-100', fg: 'text-blue-700' },
   Cancelled: { text: 'Cancelled', bg: 'bg-red-100', fg: 'text-red-700' },
@@ -61,7 +62,7 @@ function PaymentSection({ order }) {
             onClick={() => setShowCashMsg(!showCashMsg)}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-semibold transition-colors"
           >
-            <Banknote className="w-4 h-4" /> Cash
+            <Icon icon="mdi:cash" className="w-4 h-4" /> Cash
           </button>
           <button
             onClick={handleKhaltiPay}
@@ -71,7 +72,7 @@ function PaymentSection({ order }) {
             {isKhaltiLoading ? (
               <Spinner size="sm" className="text-white" />
             ) : (
-              <Wallet className="w-4 h-4" />
+              <Icon icon="mdi:wallet-outline" className="w-4 h-4" />
             )}
             Khalti
           </button>
@@ -131,9 +132,28 @@ export default function OrderTracking() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 gap-3">
-        <Spinner size="lg" className="text-blue-500" />
-        <p className="text-sm text-blue-400">Loading orders...</p>
+      <div className="space-y-5 pb-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-3 w-20" />
+          </div>
+        </div>
+        <div className="bg-white border border-blue-100 rounded-2xl p-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-5 w-24 rounded-full" />
+          </div>
+          <div className="flex items-center justify-between px-6">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="w-8 h-8 rounded-full" />
+            ))}
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -144,7 +164,7 @@ export default function OrderTracking() {
     return (
       <div className="text-center py-14">
         <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <UtensilsCrossed className="w-7 h-7 text-blue-400" />
+          <Icon icon="mdi:silverware-fork-knife" className="w-7 h-7 text-blue-400" />
         </div>
         <p className="text-gray-500 font-medium">No active orders</p>
         <p className="text-sm text-gray-400 mt-1">for Table {tableNumber}</p>
@@ -152,7 +172,7 @@ export default function OrderTracking() {
           to={`/order/table/${tableNumber}`}
           className="inline-flex items-center gap-1.5 mt-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm"
         >
-          <Plus className="w-4 h-4" /> Place an order
+          <Icon icon="mdi:plus" className="w-4 h-4" /> Place an order
         </Link>
       </div>
     );
@@ -165,7 +185,7 @@ export default function OrderTracking() {
         <div>
           <h2 className="text-xl font-bold text-gray-800">Order Status</h2>
           <div className="inline-flex items-center gap-1 text-xs text-blue-600 font-medium mt-1">
-            <MapPin className="w-3 h-3" /> Table {tableNumber}
+            <Icon icon="mdi:map-marker-outline" className="w-3 h-3" /> Table {tableNumber}
           </div>
         </div>
         <div className="flex items-center gap-1.5 text-xs text-blue-400">
@@ -178,16 +198,23 @@ export default function OrderTracking() {
       {orders.map((order) => {
         const step = statusIndex[order.status] ?? 0;
         const label = statusLabels[order.status] || statusLabels.Pending;
-        const showPayment = order.status === 'Served';
+        const showPayment = order.status === 'Served' && !order.isPrepaid;
 
         return (
           <div key={order._id} className="bg-white border border-blue-100 rounded-2xl overflow-hidden shadow-sm">
             {/* Order header */}
             <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-50 to-white border-b border-blue-100">
               <p className="text-xs text-gray-400 font-medium">{formatTime(order.createdAt)}</p>
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${label.bg} ${label.fg}`}>
-                {label.text}
-              </span>
+              <div className="flex items-center gap-1.5">
+                {order.isPrepaid && order.status !== 'Paid' && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
+                    <Icon icon="mdi:check-circle" className="w-3 h-3" /> Prepaid
+                  </span>
+                )}
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${label.bg} ${label.fg}`}>
+                  {label.text}
+                </span>
+              </div>
             </div>
 
             {/* Progress stepper */}
@@ -210,7 +237,7 @@ export default function OrderTracking() {
                           : 'bg-white border-2 border-blue-200 text-blue-300'
                       }`}
                     >
-                      <s.icon className="w-4 h-4" />
+                      <Icon icon={s.icon} className="w-4 h-4" />
                     </div>
                     <p className={`text-xs mt-1.5 font-medium ${
                       i <= step ? 'text-blue-600' : 'text-gray-300'
@@ -260,7 +287,7 @@ export default function OrderTracking() {
       {/* Order More button */}
       <Link to={`/order/table/${tableNumber}`}>
         <button className="w-full bg-white text-blue-600 border-2 border-blue-200 hover:bg-blue-50 py-3 rounded-2xl font-semibold transition-colors flex items-center justify-center gap-2">
-          <Plus className="w-4 h-4" /> Order More
+          <Icon icon="mdi:plus" className="w-4 h-4" /> Order More
         </button>
       </Link>
     </div>

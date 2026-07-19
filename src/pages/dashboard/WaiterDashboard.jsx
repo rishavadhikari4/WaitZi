@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { ClipboardList, UtensilsCrossed, Clock, CheckCircle2 } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { getAllOrders } from '../../api/orders';
 import { getAllTables } from '../../api/tables';
 import { getRealTimeStatus } from '../../api/dashboard';
@@ -11,7 +11,7 @@ import useSocket from '../../hooks/useSocket';
 import PageHeader from '../../components/shared/PageHeader';
 import StatsCard from '../../components/shared/StatsCard';
 import Badge from '../../components/ui/Badge';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonStatCards, SkeletonRows } from '../../components/ui/Skeleton';
 import { formatTime, formatCurrency } from '../../utils/formatters';
 
 export default function WaiterDashboard() {
@@ -55,7 +55,15 @@ export default function WaiterDashboard() {
   useSocket(socketRooms, socketEvents);
 
   if (isLoading) {
-    return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+    return (
+      <div>
+        <SkeletonStatCards count={4} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="card"><SkeletonRows count={4} /></div>
+          <div className="card"><SkeletonRows count={5} /></div>
+        </div>
+      </div>
+    );
   }
 
   const myTables = tables.filter(
@@ -74,10 +82,10 @@ export default function WaiterDashboard() {
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatsCard title="My Tables" value={myTables.length} icon={UtensilsCrossed} subtitle={`${occupiedTables.length} occupied`} />
-        <StatsCard title="Available" value={availableTables.length} icon={CheckCircle2} />
-        <StatsCard title="Pending Orders" value={rtData.pendingOrders ?? pendingOrders.length} icon={Clock} />
-        <StatsCard title="Active Orders" value={rtData.activeOrders ?? orders.length} icon={ClipboardList} />
+        <StatsCard title="My Tables" value={myTables.length} icon="mdi:silverware-fork-knife" subtitle={`${occupiedTables.length} occupied`} />
+        <StatsCard title="Available" value={availableTables.length} icon="mdi:check-circle" />
+        <StatsCard title="Pending Orders" value={rtData.pendingOrders ?? pendingOrders.length} icon="mdi:clock-outline" />
+        <StatsCard title="Active Orders" value={rtData.activeOrders ?? orders.length} icon="mdi:clipboard-list-outline" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -85,23 +93,23 @@ export default function WaiterDashboard() {
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">My Tables</h3>
-            <button onClick={() => navigate('/tables')} className="text-sm text-slate-500 hover:text-slate-900">
+            <button onClick={() => navigate('/tables')} className="text-sm text-gray-500 hover:text-gray-900">
               View all
             </button>
           </div>
           {myTables.length === 0 ? (
-            <p className="text-slate-400 text-sm text-center py-6">No tables assigned to you</p>
+            <p className="text-gray-400 text-sm text-center py-6">No tables assigned to you</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {myTables.map((table) => (
                 <div
                   key={table._id}
                   onClick={() => navigate('/tables')}
-                  className="border border-slate-200 rounded-lg p-3 text-center cursor-pointer hover:bg-slate-50"
+                  className="border border-gray-200 rounded-lg p-3 text-center cursor-pointer hover:bg-gray-50"
                 >
                   <p className="font-bold text-lg">T{table.tableNumber}</p>
                   <Badge status={table.status} />
-                  <p className="text-xs text-slate-400 mt-1">Cap: {table.capacity}</p>
+                  <p className="text-xs text-gray-400 mt-1">Cap: {table.capacity}</p>
                 </div>
               ))}
             </div>
@@ -112,25 +120,25 @@ export default function WaiterDashboard() {
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">Recent Orders</h3>
-            <button onClick={() => navigate('/orders')} className="text-sm text-slate-500 hover:text-slate-900">
+            <button onClick={() => navigate('/orders')} className="text-sm text-gray-500 hover:text-gray-900">
               View all
             </button>
           </div>
           {orders.length === 0 ? (
-            <p className="text-slate-400 text-sm text-center py-6">No active orders</p>
+            <p className="text-gray-400 text-sm text-center py-6">No active orders</p>
           ) : (
             <div className="space-y-2 max-h-80 overflow-y-auto">
               {orders.slice(0, 10).map((order) => (
                 <div
                   key={order._id}
                   onClick={() => navigate(`/orders/${order._id}`)}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 cursor-pointer border border-slate-200"
+                  className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer border border-gray-200"
                 >
                   <div>
                     <p className="text-sm font-medium">
                       Table {order.table?.tableNumber ?? '?'} - {order.customerName || 'Customer'}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-gray-400">
                       {order.items?.length ?? 0} items &middot; {formatTime(order.createdAt)}
                     </p>
                   </div>
@@ -147,9 +155,9 @@ export default function WaiterDashboard() {
 
       {/* Ready to Serve Alert */}
       {readyOrders.length > 0 && (
-        <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-4">
-          <h3 className="font-semibold text-green-800 mb-2 flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5" />
+        <div className="mt-6 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+          <h3 className="font-semibold text-emerald-800 mb-2 flex items-center gap-2">
+            <Icon icon="mdi:check-circle" className="w-5 h-5" />
             Ready to Serve ({readyOrders.length})
           </h3>
           <div className="space-y-2">
@@ -157,7 +165,7 @@ export default function WaiterDashboard() {
               <div
                 key={order._id}
                 onClick={() => navigate(`/orders/${order._id}`)}
-                className="flex items-center justify-between p-2 bg-white rounded-lg cursor-pointer hover:bg-green-50"
+                className="flex items-center justify-between p-2 bg-white rounded-lg cursor-pointer hover:bg-emerald-50"
               >
                 <span className="text-sm font-medium">
                   Table {order.table?.tableNumber ?? '?'} - #{order._id?.slice(-6)}

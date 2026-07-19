@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Eye, EyeOff } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { register } from '../../api/auth';
 import { getAllRoles } from '../../api/roles';
 import PageHeader from '../../components/shared/PageHeader';
@@ -94,7 +94,7 @@ export default function UserFormPage() {
         </div>
         <Input label="Email" type="email" value={form.email} onChange={set('email')} error={errors.email} placeholder="you@example.com" />
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-slate-700">Password</label>
+          <label className="block text-sm font-medium text-gray-700">Password</label>
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
@@ -106,15 +106,15 @@ export default function UserFormPage() {
             <button
               type="button"
               onClick={() => setShowPassword((p) => !p)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showPassword ? <Icon icon="mdi:eye-off-outline" width={18} /> : <Icon icon="mdi:eye-outline" width={18} />}
             </button>
           </div>
           {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
         </div>
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-slate-700">Confirm Password</label>
+          <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
           <div className="relative">
             <input
               type={showConfirmPassword ? 'text' : 'password'}
@@ -126,9 +126,9 @@ export default function UserFormPage() {
             <button
               type="button"
               onClick={() => setShowConfirmPassword((p) => !p)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >
-              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showConfirmPassword ? <Icon icon="mdi:eye-off-outline" width={18} /> : <Icon icon="mdi:eye-outline" width={18} />}
             </button>
           </div>
           {errors.confirmPassword && <p className="text-sm text-red-600">{errors.confirmPassword}</p>}

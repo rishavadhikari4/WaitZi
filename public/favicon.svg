@@ -1,0 +1,38 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="waitziFaviconTitle">
+  <title id="waitziFaviconTitle">WaitZi</title>
+  <style>
+    .wing { fill: #2C2C2A; }
+    .knot { fill: #D85A30; fill: AccentColor; }
+    @media (prefers-color-scheme: dark) {
+      .wing { fill: #F5F1EA; }
+    }
+  </style>
+  <g transform="translate(0,16) scale(1,1.25) translate(0,-16)">
+  <!-- Left Bow -->
+  <path
+    class="wing"
+    d="
+      M3.2 8
+      C1.2 12 1.2 20 3.2 24
+      C4.4 26.6 8.6 24.6 12 21
+      C13.8 19.1 14.9 17.6 15.3 16.6
+      C15.5 16.2 15.5 15.8 15.3 15.4
+      C14.9 14.4 13.8 12.9 12 11
+      C8.6 7.4 4.4 5.4 3.2 8
+      Z"/>
+  <!-- Right Bow -->
+  <path
+    class="wing"
+    d="
+      M28.8 8
+      C30.8 12 30.8 20 28.8 24
+      C27.6 26.6 23.4 24.6 20 21
+      C18.2 19.1 17.1 17.6 16.7 16.6
+      C16.5 16.2 16.5 15.8 16.7 15.4
+      C17.1 14.4 18.2 12.9 20 11
+      C23.4 7.4 27.6 5.4 28.8 8
+      Z"/>
+  <!-- Center knot (pinched) -->
+  <rect class="knot" x="14.1" y="12.5" width="3.8" height="7" rx="1.2"/>
+  </g>
+</svg>

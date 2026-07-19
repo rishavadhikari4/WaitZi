@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Upload, X } from 'lucide-react';
+import { Icon } from '@iconify/react';
 
 export default function FileUpload({ label, onChange, accept = 'image/*', preview: existingPreview }) {
   const [preview, setPreview] = useState(existingPreview || null);
@@ -22,26 +22,26 @@ export default function FileUpload({ label, onChange, accept = 'image/*', previe
 
   return (
     <div className="space-y-1">
-      {label && <label className="block text-sm font-medium text-slate-700">{label}</label>}
+      {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
       {preview ? (
         <div className="relative inline-block">
-          <img src={preview} alt="Preview" className="w-32 h-32 object-cover rounded-lg border border-slate-200" />
+          <img src={preview} alt="Preview" className="w-32 h-32 object-cover rounded-lg border border-gray-200" />
           <button
             onClick={handleClear}
             className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5"
             type="button"
           >
-            <X className="w-3.5 h-3.5" />
+            <Icon icon="mdi:close" className="w-3.5 h-3.5" />
           </button>
         </div>
       ) : (
         <div
           onClick={() => inputRef.current?.click()}
-          className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center cursor-pointer hover:border-indigo-400 transition-colors"
+          className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-400 transition-colors"
         >
-          <Upload className="w-8 h-8 mx-auto mb-2 text-slate-400" />
-          <p className="text-sm text-slate-500">Click to upload</p>
-          <p className="text-xs text-slate-400 mt-1">or drag and drop</p>
+          <Icon icon="mdi:upload-outline" className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+          <p className="text-sm text-gray-500">Click to upload</p>
+          <p className="text-xs text-gray-400 mt-1">or drag and drop</p>
         </div>
       )}
       <input ref={inputRef} type="file" accept={accept} onChange={handleChange} className="hidden" />

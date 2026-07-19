@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Eye, EyeOff } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { changePassword } from '../../api/password';
 import useAuth from '../../hooks/useAuth';
 import Button from '../../components/ui/Button';
@@ -11,7 +11,7 @@ import PageHeader from '../../components/shared/PageHeader';
 function PasswordField({ label, value, showState, onShowToggle, onChange, error, placeholder }) {
   return (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-slate-700">{label}</label>
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
       <div className="relative">
         <input
           type={showState ? 'text' : 'password'}
@@ -23,9 +23,9 @@ function PasswordField({ label, value, showState, onShowToggle, onChange, error,
         <button
           type="button"
           onClick={onShowToggle}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
         >
-          {showState ? <EyeOff size={18} /> : <Eye size={18} />}
+          {showState ? <Icon icon="mdi:eye-off-outline" width={18} /> : <Icon icon="mdi:eye-outline" width={18} />}
         </button>
       </div>
       {error && <p className="text-sm text-red-600">{error}</p>}

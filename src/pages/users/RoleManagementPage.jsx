@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { getAllRoles, createRole, updateRole, deleteRole } from '../../api/roles';
 import PageHeader from '../../components/shared/PageHeader';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonCardGrid } from '../../components/ui/Skeleton';
 
 export default function RoleManagementPage() {
   const [roles, setRoles] = useState([]);
@@ -78,11 +78,11 @@ export default function RoleManagementPage() {
     }
   };
 
-  if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+  if (isLoading) return <SkeletonCardGrid count={6} />;
 
   return (
     <div>
-      <PageHeader title="Roles" actions={<Button onClick={openCreateForm}><Plus className="w-4 h-4 mr-1" /> Add Role</Button>} />
+      <PageHeader title="Roles" actions={<Button onClick={openCreateForm}><Icon icon="mdi:plus" className="w-4 h-4 mr-1" /> Add Role</Button>} />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {roles.map((role) => {
           const isSystem = systemRoles.includes(role.name);
@@ -91,25 +91,25 @@ export default function RoleManagementPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="font-semibold capitalize">{role.name}</h3>
-                  {role.description && <p className="text-sm text-slate-500 mt-1">{role.description}</p>}
+                  {role.description && <p className="text-sm text-gray-500 mt-1">{role.description}</p>}
                 </div>
                 {isSystem && (
-                  <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">System</span>
+                  <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">System</span>
                 )}
               </div>
-              <div className="flex gap-2 mt-3 pt-3 border-t border-slate-200">
+              <div className="flex gap-2 mt-3 pt-3 border-t border-gray-200">
                 <button
                   onClick={() => openEditForm(role)}
                   className="flex items-center gap-1 text-sm text-black hover:underline"
                 >
-                  <Pencil className="w-3.5 h-3.5" /> Edit
+                  <Icon icon="mdi:pencil-outline" className="w-3.5 h-3.5" /> Edit
                 </button>
                 {!isSystem && (
                   <button
                     onClick={() => setDeleteId(role._id)}
                     className="flex items-center gap-1 text-sm text-red-600 hover:underline"
                   >
-                    <Trash2 className="w-3.5 h-3.5" /> Delete
+                    <Icon icon="mdi:trash-can-outline" className="w-3.5 h-3.5" /> Delete
                   </button>
                 )}
               </div>

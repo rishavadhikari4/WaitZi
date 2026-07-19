@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Icon } from '@iconify/react';
 
 export default function Pagination({ currentPage, totalPages, totalItems, limit, onPageChange }) {
   if (!totalPages || totalPages <= 1) return null;
@@ -13,23 +13,23 @@ export default function Pagination({ currentPage, totalPages, totalItems, limit,
 
   return (
     <div className="flex items-center justify-between mt-4">
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-gray-500">
         Showing {start}-{end} of {totalItems}
       </p>
       <div className="flex items-center gap-1">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="p-2 rounded-md hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed text-slate-600"
+          className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <Icon icon="mdi:chevron-left" className="w-4 h-4" />
         </button>
         {pages.map((page) => (
           <button
             key={page}
             onClick={() => onPageChange(page)}
             className={`px-3 py-1 rounded-md text-sm font-medium ${
-              page === currentPage ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+              page === currentPage ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
             {page}
@@ -38,9 +38,9 @@ export default function Pagination({ currentPage, totalPages, totalItems, limit,
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="p-2 rounded-md hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed text-slate-600"
+          className="p-2 rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600"
         >
-          <ChevronRight className="w-4 h-4" />
+          <Icon icon="mdi:chevron-right" className="w-4 h-4" />
         </button>
       </div>
     </div>

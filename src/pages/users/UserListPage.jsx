@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Plus } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { getAllUsers, updateUserStatus } from '../../api/users';
 import useAuth from '../../hooks/useAuth';
 import PageHeader from '../../components/shared/PageHeader';
@@ -88,7 +88,7 @@ export default function UserListPage() {
     <div>
       <PageHeader
         title="Staff"
-        actions={isAdmin && <Button onClick={() => navigate('/users/new')}><Plus className="w-4 h-4 mr-1" /> Add Staff</Button>}
+        actions={isAdmin && <Button onClick={() => navigate('/users/new')}><Icon icon="mdi:plus" className="w-4 h-4 mr-1" /> Add Staff</Button>}
       />
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <SearchInput onSearch={(v) => { setSearch(v); setPage(1); }} placeholder="Search staff..." className="flex-1" />

@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
-import { ShoppingBag, Clock, ChefHat, UtensilsCrossed, DollarSign, Users } from 'lucide-react';
 import { getRealTimeStatus } from '../../api/dashboard';
 import usePolling from '../../hooks/usePolling';
 import useSocket from '../../hooks/useSocket';
 import StatsCard from '../../components/shared/StatsCard';
 import PageHeader from '../../components/shared/PageHeader';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonStatCards } from '../../components/ui/Skeleton';
 import { formatCurrency, formatDateTime } from '../../utils/formatters';
 
 export default function RealTimePage() {
@@ -24,11 +23,7 @@ export default function RealTimePage() {
   useSocket(socketRooms, socketEvents);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner size="lg" />
-      </div>
-    );
+    return <SkeletonStatCards count={7} className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" />;
   }
 
   const stats = data?.data || {};
@@ -40,13 +35,13 @@ export default function RealTimePage() {
         subtitle={stats.lastUpdated ? `Updated ${formatDateTime(stats.lastUpdated)}` : undefined}
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatsCard title="Active Orders" value={stats.activeOrders ?? 0} icon={ShoppingBag} />
-        <StatsCard title="Pending Orders" value={stats.pendingOrders ?? 0} icon={Clock} />
-        <StatsCard title="Kitchen Queue" value={stats.kitchenQueue ?? 0} icon={ChefHat} />
-        <StatsCard title="Available Tables" value={stats.availableTables ?? 0} icon={UtensilsCrossed} />
-        <StatsCard title="Occupied Tables" value={stats.occupiedTables ?? 0} icon={UtensilsCrossed} />
-        <StatsCard title="Today's Revenue" value={formatCurrency(stats.totalRevenue ?? 0)} icon="Rs" />
-        <StatsCard title="Staff On Duty" value={stats.staffOnDuty ?? 0} icon={Users} />
+        <StatsCard title="Active Orders" value={stats.activeOrders ?? 0} icon="mdi:shopping-outline" />
+        <StatsCard title="Pending Orders" value={stats.pendingOrders ?? 0} icon="mdi:clock-outline" />
+        <StatsCard title="Kitchen Queue" value={stats.kitchenQueue ?? 0} icon="mdi:chef-hat" />
+        <StatsCard title="Available Tables" value={stats.availableTables ?? 0} icon="mdi:silverware-fork-knife" />
+        <StatsCard title="Occupied Tables" value={stats.occupiedTables ?? 0} icon="mdi:silverware-fork-knife" />
+        <StatsCard title="Today's Revenue" value={formatCurrency(stats.totalRevenue ?? 0)} icon="mdi:currency-usd" />
+        <StatsCard title="Staff On Duty" value={stats.staffOnDuty ?? 0} icon="mdi:account-group-outline" />
       </div>
     </div>
   );

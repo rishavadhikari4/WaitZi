@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Clock, ChefHat, CheckCircle2, Flame } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { getKitchenQueue, updateOrderItemStatus } from '../../api/orders';
 import { getRealTimeStatus } from '../../api/dashboard';
 import useAuth from '../../hooks/useAuth';
@@ -10,6 +10,7 @@ import PageHeader from '../../components/shared/PageHeader';
 import StatsCard from '../../components/shared/StatsCard';
 import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
+import { SkeletonStatCards, SkeletonCardGrid } from '../../components/ui/Skeleton';
 import { formatTime } from '../../utils/formatters';
 
 export default function KitchenDashboard() {
@@ -55,7 +56,12 @@ export default function KitchenDashboard() {
   };
 
   if (queueLoading) {
-    return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+    return (
+      <div>
+        <SkeletonStatCards count={4} />
+        <SkeletonCardGrid count={6} />
+      </div>
+    );
   }
 
   return (
@@ -66,15 +72,15 @@ export default function KitchenDashboard() {
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatsCard title="Orders in Queue" value={orders.length} icon={ChefHat} />
-        <StatsCard title="Pending Items" value={pendingItems} icon={Clock} />
-        <StatsCard title="Cooking" value={cookingItems} icon={Flame} />
-        <StatsCard title="Ready" value={readyItems} icon={CheckCircle2} />
+        <StatsCard title="Orders in Queue" value={orders.length} icon="mdi:chef-hat" />
+        <StatsCard title="Pending Items" value={pendingItems} icon="mdi:clock-outline" />
+        <StatsCard title="Cooking" value={cookingItems} icon="mdi:fire" />
+        <StatsCard title="Ready" value={readyItems} icon="mdi:check-circle" />
       </div>
 
       {orders.length === 0 ? (
-        <div className="text-center py-20 text-slate-400">
-          <ChefHat className="w-16 h-16 mx-auto mb-4" />
+        <div className="text-center py-20 text-gray-400">
+          <Icon icon="mdi:chef-hat" className="w-16 h-16 mx-auto mb-4" />
           <p className="text-lg">Kitchen is clear!</p>
           <p className="text-sm">No orders in queue right now.</p>
         </div>
@@ -87,7 +93,7 @@ export default function KitchenDashboard() {
               <div
                 key={order._id}
                 className={`card border-2 ${
-                  hasPending ? 'border-yellow-300' : allReady ? 'border-green-300' : 'border-blue-300'
+                  hasPending ? 'border-amber-300' : allReady ? 'border-emerald-300' : 'border-blue-300'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -95,11 +101,11 @@ export default function KitchenDashboard() {
                     <span className="text-xl font-bold">Table {order.table?.tableNumber ?? '?'}</span>
                     <Badge status={order.status} className="ml-2" />
                   </div>
-                  <span className="text-sm text-slate-400">{formatTime(order.createdAt)}</span>
+                  <span className="text-sm text-gray-400">{formatTime(order.createdAt)}</span>
                 </div>
 
                 {order.customerName && (
-                  <p className="text-sm text-slate-500 mb-2">{order.customerName}</p>
+                  <p className="text-sm text-gray-500 mb-2">{order.customerName}</p>
                 )}
 
                 <div className="space-y-2">
@@ -108,12 +114,12 @@ export default function KitchenDashboard() {
                       key={item._id || i}
                       className={`flex items-center justify-between p-2 rounded-lg ${
                         item.status === 'Pending'
-                          ? 'bg-yellow-50'
+                          ? 'bg-amber-50'
                           : item.status === 'Cooking'
                           ? 'bg-blue-50'
                           : item.status === 'Ready'
-                          ? 'bg-green-50'
-                          : 'bg-slate-50'
+                          ? 'bg-emerald-50'
+                          : 'bg-gray-50'
                       }`}
                     >
                       <div className="flex-1">
@@ -131,25 +137,25 @@ export default function KitchenDashboard() {
                             disabled={updatingItemId === item._id}
                             className={`px-3 py-1.5 bg-blue-600 text-white rounded-md text-xs font-medium hover:bg-blue-700 flex items-center gap-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
                           >
-                            {updatingItemId === item._id ? <Spinner size="sm" /> : <Flame className="w-3.5 h-3.5" />} Cook
+                            {updatingItemId === item._id ? <Spinner size="sm" /> : <Icon icon="mdi:fire" className="w-3.5 h-3.5" />} Cook
                           </button>
                         )}
                         {item.status === 'Cooking' && (
                           <button
                             onClick={() => handleItemStatus(order._id, item._id, 'Ready')}
                             disabled={updatingItemId === item._id}
-                            className={`px-3 py-1.5 bg-green-600 text-white rounded-md text-xs font-medium hover:bg-green-700 flex items-center gap-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`px-3 py-1.5 bg-emerald-600 text-white rounded-md text-xs font-medium hover:bg-emerald-700 flex items-center gap-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
                           >
-                            {updatingItemId === item._id ? <Spinner size="sm" /> : <CheckCircle2 className="w-3.5 h-3.5" />} Done
+                            {updatingItemId === item._id ? <Spinner size="sm" /> : <Icon icon="mdi:check-circle" className="w-3.5 h-3.5" />} Done
                           </button>
                         )}
                         {item.status === 'Ready' && (
-                          <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                          <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
                             Ready
                           </span>
                         )}
                         {item.status === 'Served' && (
-                          <span className="px-2 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-medium">
+                          <span className="px-2 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-medium">
                             Served
                           </span>
                         )}
@@ -159,8 +165,8 @@ export default function KitchenDashboard() {
                 </div>
 
                 {order.note && (
-                  <div className="mt-3 p-2 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <p className="text-xs text-yellow-800">Order Note: {order.note}</p>
+                  <div className="mt-3 p-2 bg-amber-50 rounded-lg border border-amber-200">
+                    <p className="text-xs text-amber-800">Order Note: {order.note}</p>
                   </div>
                 )}
               </div>

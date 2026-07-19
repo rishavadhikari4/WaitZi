@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { getAllTables, updateTableStatus, clearTable, deleteTable } from '../../api/tables';
 import useAuth from '../../hooks/useAuth';
 import PageHeader from '../../components/shared/PageHeader';
@@ -9,6 +9,7 @@ import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Select from '../../components/ui/Select';
 import Spinner from '../../components/ui/Spinner';
+import { SkeletonStatCards, SkeletonCardGrid } from '../../components/ui/Skeleton';
 import StatsCard from '../../components/shared/StatsCard';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import { TABLE_STATUSES } from '../../utils/constants';
@@ -85,11 +86,18 @@ export default function TableListPage() {
     }
   };
 
-  if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+  if (isLoading) {
+    return (
+      <div>
+        <SkeletonStatCards count={4} />
+        <SkeletonCardGrid count={8} />
+      </div>
+    );
+  }
 
   return (
     <div>
-      <PageHeader title="Tables" actions={canManage && <Button onClick={() => navigate('/tables/new')}><Plus className="w-4 h-4 mr-1" /> Add Table</Button>} />
+      <PageHeader title="Tables" actions={canManage && <Button onClick={() => navigate('/tables/new')}><Icon icon="mdi:plus" className="w-4 h-4 mr-1" /> Add Table</Button>} />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <StatsCard title="Total" value={stats.total ?? tables.length} />
@@ -115,9 +123,9 @@ export default function TableListPage() {
               <h3 className="text-lg font-bold">Table {table.tableNumber}</h3>
               <Badge status={table.status} />
             </div>
-            <p className="text-sm text-slate-500 mb-1">Capacity: {table.capacity}</p>
+            <p className="text-sm text-gray-500 mb-1">Capacity: {table.capacity}</p>
             {table.assignedWaiter && (
-              <p className="text-sm text-slate-500">Waiter: {table.assignedWaiter.firstName} {table.assignedWaiter.lastName}</p>
+              <p className="text-sm text-gray-500">Waiter: {table.assignedWaiter.firstName} {table.assignedWaiter.lastName}</p>
             )}
             <div className="mt-3 flex gap-2 items-center">
               <div className="flex items-center gap-1 flex-1">
@@ -126,7 +134,7 @@ export default function TableListPage() {
                   value={table.status}
                   onChange={(e) => handleStatusChange(table._id, e.target.value)}
                   disabled={togglingTableId === table._id}
-                  className={`text-xs border border-slate-200 rounded px-2 py-1 flex-1 ${togglingTableId === table._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`text-xs border border-gray-200 rounded px-2 py-1 flex-1 ${togglingTableId === table._id ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {TABLE_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
@@ -143,18 +151,18 @@ export default function TableListPage() {
               )}
             </div>
             {canManage && (
-              <div className="flex gap-2 mt-3 pt-3 border-t border-slate-200">
+              <div className="flex gap-2 mt-3 pt-3 border-t border-gray-200">
                 <button
                   onClick={() => navigate(`/tables/${table._id}/edit`)}
                   className="flex items-center gap-1 text-sm text-black hover:underline"
                 >
-                  <Pencil className="w-3.5 h-3.5" /> Edit
+                  <Icon icon="mdi:pencil-outline" className="w-3.5 h-3.5" /> Edit
                 </button>
                 <button
                   onClick={() => setDeleteId(table._id)}
                   className="flex items-center gap-1 text-sm text-red-600 hover:underline"
                 >
-                  <Trash2 className="w-3.5 h-3.5" /> Delete
+                  <Icon icon="mdi:trash-can-outline" className="w-3.5 h-3.5" /> Delete
                 </button>
               </div>
             )}

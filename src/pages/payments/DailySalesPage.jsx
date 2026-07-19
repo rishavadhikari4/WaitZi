@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { DollarSign, CreditCard, TrendingUp } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { getDailySales } from '../../api/payments';
 import PageHeader from '../../components/shared/PageHeader';
 import StatsCard from '../../components/shared/StatsCard';
-import Spinner from '../../components/ui/Spinner';
+import { SkeletonStatCards, SkeletonChart } from '../../components/ui/Skeleton';
 import { formatCurrency } from '../../utils/formatters';
 import { PAYMENT_METHOD_COLORS } from '../../utils/constants';
 
@@ -22,7 +21,14 @@ export default function DailySalesPage() {
       .finally(() => setIsLoading(false));
   }, [date]);
 
-  if (isLoading) return <div className="flex justify-center py-20"><Spinner size="lg" /></div>;
+  if (isLoading) {
+    return (
+      <div>
+        <SkeletonStatCards count={3} className="grid-cols-1 sm:grid-cols-3" />
+        <SkeletonChart />
+      </div>
+    );
+  }
 
   // Backend returns: { date, summary: { totalSales, totalTransactions, averageTransaction }, paymentMethods: [...] }
   const summary = data?.summary || {};
@@ -47,9 +53,9 @@ export default function DailySalesPage() {
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <StatsCard title="Total Sales" value={formatCurrency(summary.totalSales ?? 0)} icon={DollarSign} />
-        <StatsCard title="Transactions" value={summary.totalTransactions ?? 0} icon={CreditCard} />
-        <StatsCard title="Average" value={formatCurrency(summary.averageTransaction ?? 0)} icon={TrendingUp} />
+        <StatsCard title="Total Sales" value={formatCurrency(summary.totalSales ?? 0)} icon="mdi:currency-usd" />
+        <StatsCard title="Transactions" value={summary.totalTransactions ?? 0} icon="mdi:credit-card-outline" />
+        <StatsCard title="Average" value={formatCurrency(summary.averageTransaction ?? 0)} icon="mdi:trending-up" />
       </div>
 
       {chartData.length > 0 && (
