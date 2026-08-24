@@ -100,14 +100,14 @@ export default function RoleManagementPage() {
               <div className="flex gap-2 mt-3 pt-3 border-t border-gray-200">
                 <button
                   onClick={() => openEditForm(role)}
-                  className="flex items-center gap-1 text-sm text-black hover:underline"
+                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600"
                 >
                   <Icon icon="mdi:pencil-outline" className="w-3.5 h-3.5" /> Edit
                 </button>
                 {!isSystem && (
                   <button
                     onClick={() => setDeleteId(role._id)}
-                    className="flex items-center gap-1 text-sm text-red-600 hover:underline"
+                    className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700"
                   >
                     <Icon icon="mdi:trash-can-outline" className="w-3.5 h-3.5" /> Delete
                   </button>

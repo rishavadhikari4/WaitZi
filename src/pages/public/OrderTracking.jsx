@@ -12,9 +12,9 @@ import { Skeleton } from '../../components/ui/Skeleton';
 import { formatCurrency, formatTime } from '../../utils/formatters';
 
 const statusSteps = [
-  { key: 'Pending', label: 'Received', icon: 'mdi:clock-outline', color: 'blue' },
-  { key: 'InKitchen', label: 'Preparing', icon: 'mdi:chef-hat', color: 'blue' },
-  { key: 'Served', label: 'Served', icon: 'mdi:silverware-fork-knife', color: 'blue' },
+  { key: 'Pending', label: 'Received', icon: 'mdi:clock-outline' },
+  { key: 'InKitchen', label: 'Preparing', icon: 'mdi:chef-hat' },
+  { key: 'Served', label: 'Served', icon: 'mdi:silverware-fork-knife' },
 ];
 
 const statusIndex = { Pending: 0, InKitchen: 1, Cooking: 1, Ready: 1, Served: 2, Completed: 2, Paid: 2 };
@@ -55,14 +55,14 @@ function PaymentSection({ order }) {
 
   return (
     <div className="px-4 pb-4 pt-1">
-      <div className="border-t border-blue-100 pt-3">
+      <div className="border-t border-dashed border-gray-200 pt-3">
         <p className="text-xs text-gray-500 font-medium mb-2.5 text-center">How would you like to pay?</p>
         <div className="flex gap-2">
           <button
             onClick={() => setShowCashMsg(!showCashMsg)}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-semibold transition-colors"
           >
-            <Icon icon="mdi:cash" className="w-4 h-4" /> Cash
+            <Icon icon="mdi:cash" className="w-4 h-4 text-blue-700" /> Cash
           </button>
           <button
             onClick={handleKhaltiPay}
@@ -139,7 +139,7 @@ export default function OrderTracking() {
             <Skeleton className="h-3 w-20" />
           </div>
         </div>
-        <div className="bg-white border border-blue-100 rounded-2xl p-4 space-y-4">
+        <div className="bg-white border border-gray-200 rounded-2xl p-4 space-y-4">
           <div className="flex items-center justify-between">
             <Skeleton className="h-3 w-16" />
             <Skeleton className="h-5 w-24 rounded-full" />
@@ -163,11 +163,11 @@ export default function OrderTracking() {
   if (!orders.length) {
     return (
       <div className="text-center py-14">
-        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Icon icon="mdi:silverware-fork-knife" className="w-7 h-7 text-blue-400" />
+        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Icon icon="mdi:silverware-fork-knife" className="w-7 h-7 text-gray-400" />
         </div>
         <p className="text-gray-500 font-medium">No active orders</p>
-        <p className="text-sm text-gray-400 mt-1">for Table {tableNumber}</p>
+        <p className="text-sm text-gray-400 mt-1 font-mono">TABLE {tableNumber}</p>
         <Link
           to={`/order/table/${tableNumber}`}
           className="inline-flex items-center gap-1.5 mt-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm"
@@ -184,12 +184,12 @@ export default function OrderTracking() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-gray-800">Order Status</h2>
-          <div className="inline-flex items-center gap-1 text-xs text-blue-600 font-medium mt-1">
-            <Icon icon="mdi:map-marker-outline" className="w-3 h-3" /> Table {tableNumber}
+          <div className="inline-flex items-center gap-1 text-xs text-gray-500 font-mono font-medium mt-1">
+            <Icon icon="mdi:map-marker-outline" className="w-3 h-3 text-blue-600" /> TABLE {tableNumber}
           </div>
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-blue-400">
-          <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+        <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
+          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
           Live updates
         </div>
       </div>
@@ -201,10 +201,10 @@ export default function OrderTracking() {
         const showPayment = order.status === 'Served' && !order.isPrepaid;
 
         return (
-          <div key={order._id} className="bg-white border border-blue-100 rounded-2xl overflow-hidden shadow-sm">
+          <div key={order._id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
             {/* Order header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-50 to-white border-b border-blue-100">
-              <p className="text-xs text-gray-400 font-medium">{formatTime(order.createdAt)}</p>
+            <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-dashed border-gray-200">
+              <p className="text-xs text-gray-400 font-mono font-medium">{formatTime(order.createdAt)}</p>
               <div className="flex items-center gap-1.5">
                 {order.isPrepaid && order.status !== 'Paid' && (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
@@ -221,7 +221,7 @@ export default function OrderTracking() {
             <div className="px-4 py-4">
               <div className="flex items-center justify-between relative">
                 {/* Progress line background */}
-                <div className="absolute top-4 left-6 right-6 h-0.5 bg-blue-100" />
+                <div className="absolute top-4 left-6 right-6 h-0.5 bg-gray-100" />
                 {/* Active progress line */}
                 <div
                   className="absolute top-4 left-6 h-0.5 bg-blue-500 transition-all duration-700"
@@ -234,13 +234,13 @@ export default function OrderTracking() {
                       className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 ${
                         i <= step
                           ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
-                          : 'bg-white border-2 border-blue-200 text-blue-300'
+                          : 'bg-white border-2 border-gray-200 text-gray-300'
                       }`}
                     >
                       <Icon icon={s.icon} className="w-4 h-4" />
                     </div>
                     <p className={`text-xs mt-1.5 font-medium ${
-                      i <= step ? 'text-blue-600' : 'text-gray-300'
+                      i <= step ? 'text-blue-700' : 'text-gray-300'
                     }`}>
                       {s.label}
                     </p>
@@ -255,26 +255,25 @@ export default function OrderTracking() {
                 {order.items?.map((item, i) => {
                   const itemLabel = statusLabels[item.status];
                   return (
-                    <div key={i} className="flex justify-between items-center text-sm py-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-gray-700">
-                          <span className="font-medium text-blue-600">{item.quantity}x</span> {item.menuItem?.name || 'Item'}
+                    <div key={i} className="flex items-center text-sm py-1 gap-2">
+                      <span className="text-gray-700 shrink-0">
+                        <span className="font-mono font-medium text-blue-700">{item.quantity}×</span> {item.menuItem?.name || 'Item'}
+                      </span>
+                      {item.status && item.status !== order.status && itemLabel && (
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 ${itemLabel.bg} ${itemLabel.fg}`}>
+                          {itemLabel.text}
                         </span>
-                        {item.status && item.status !== order.status && itemLabel && (
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${itemLabel.bg} ${itemLabel.fg}`}>
-                            {itemLabel.text}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-gray-400 text-xs">{formatCurrency(item.subtotal || item.menuItem?.price * item.quantity)}</span>
+                      )}
+                      <span className="leader" />
+                      <span className="text-gray-500 text-xs font-mono shrink-0">{formatCurrency(item.subtotal || item.menuItem?.price * item.quantity)}</span>
                     </div>
                   );
                 })}
               </div>
 
-              <div className="flex justify-between items-center mt-3 pt-3 border-t border-blue-100">
+              <div className="flex justify-between items-center mt-3 pt-3 border-t border-dashed border-gray-200">
                 <span className="text-sm text-gray-500 font-medium">Total</span>
-                <span className="font-bold text-blue-600">{formatCurrency(order.finalAmount || order.totalAmount)}</span>
+                <span className="font-mono font-bold text-gray-900">{formatCurrency(order.finalAmount || order.totalAmount)}</span>
               </div>
             </div>
 
@@ -286,7 +285,7 @@ export default function OrderTracking() {
 
       {/* Order More button */}
       <Link to={`/order/table/${tableNumber}`}>
-        <button className="w-full bg-white text-blue-600 border-2 border-blue-200 hover:bg-blue-50 py-3 rounded-2xl font-semibold transition-colors flex items-center justify-center gap-2">
+        <button className="w-full bg-white text-gray-700 border-2 border-gray-200 hover:bg-gray-50 py-3 rounded-2xl font-semibold transition-colors flex items-center justify-center gap-2">
           <Icon icon="mdi:plus" className="w-4 h-4" /> Order More
         </button>
       </Link>

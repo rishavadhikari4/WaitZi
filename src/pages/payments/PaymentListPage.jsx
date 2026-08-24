@@ -40,14 +40,14 @@ export default function PaymentListPage() {
   const columns = [
     { key: 'id', label: 'ID', render: (row) => <span className="font-mono text-xs">#{row._id?.slice(-6)}</span> },
     { key: 'order', label: 'Order', render: (row) => <span className="font-mono text-xs">#{(row.order?._id || row.order)?.slice(-6)}</span> },
-    { key: 'amount', label: 'Amount', render: (row) => formatCurrency(row.amount) },
+    { key: 'amount', label: 'Amount', render: (row) => <span className="font-mono font-medium">{formatCurrency(row.amount)}</span> },
     { key: 'paymentMethod', label: 'Method', render: (row) => {
       const mc = PAYMENT_METHOD_COLORS[row.paymentMethod];
       return <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${mc?.badge || 'bg-gray-100 text-gray-800'}`}>{row.paymentMethod}</span>;
     }},
     { key: 'paymentStatus', label: 'Status', render: (row) => <Badge status={row.paymentStatus} /> },
     { key: 'handledBy', label: 'Handled By', render: (row) => row.handledBy ? `${row.handledBy.firstName} ${row.handledBy.lastName}` : '-' },
-    { key: 'paymentTime', label: 'Time', render: (row) => row.paymentTime ? formatDateTime(row.paymentTime) : '-' },
+    { key: 'paymentTime', label: 'Time', render: (row) => <span className="font-mono text-xs text-gray-500">{row.paymentTime ? formatDateTime(row.paymentTime) : '-'}</span> },
   ];
 
   return (

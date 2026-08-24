@@ -60,7 +60,7 @@ export default function CategoryListPage() {
                 {cat.image ? (
                   <img src={cat.image} alt={cat.name} className="w-16 h-16 object-cover rounded-lg flex-shrink-0" />
                 ) : (
-                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xl font-bold flex-shrink-0">
+                  <div className="w-16 h-16 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 text-xl font-bold flex-shrink-0">
                     {cat.name?.[0]}
                   </div>
                 )}
@@ -76,13 +76,13 @@ export default function CategoryListPage() {
                 <div className="flex gap-2 mt-3 pt-3 border-t border-gray-200">
                   <button
                     onClick={() => navigate(`/categories/${cat._id}/edit`)}
-                    className="flex items-center gap-1 text-sm text-black hover:underline"
+                    className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600"
                   >
                     <Icon icon="mdi:pencil-outline" className="w-3.5 h-3.5" /> Edit
                   </button>
                   <button
                     onClick={() => setDeleteId(cat._id)}
-                    className="flex items-center gap-1 text-sm text-red-600 hover:underline"
+                    className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700"
                   >
                     <Icon icon="mdi:trash-can-outline" className="w-3.5 h-3.5" /> Delete
                   </button>

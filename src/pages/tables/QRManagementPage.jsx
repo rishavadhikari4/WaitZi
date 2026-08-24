@@ -102,7 +102,7 @@ export default function QRManagementPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {tables.map((table) => (
           <div key={table._id} className="card text-center">
-            <h3 className="font-bold mb-3">Table {table.tableNumber}</h3>
+            <h3 className="font-mono font-bold mb-3">T{table.tableNumber}</h3>
             {qrImages[table._id] ? (
               <img
                 src={typeof qrImages[table._id] === 'string' ? qrImages[table._id] : ''}
@@ -140,11 +140,11 @@ export default function QRManagementPage() {
               </button>
             </div>
             {analytics[table._id] && (
-              <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-600 space-y-1">
-                <div className="flex justify-between"><span>Total Scans</span><span className="font-medium">{analytics[table._id].totalScans ?? 0}</span></div>
-                <div className="flex justify-between"><span>Orders via QR</span><span className="font-medium">{analytics[table._id].totalOrders ?? 0}</span></div>
+              <div className="mt-3 pt-3 border-t border-dashed border-gray-200 text-xs text-gray-600 space-y-1">
+                <div className="flex justify-between"><span>Total Scans</span><span className="font-mono font-medium">{analytics[table._id].totalScans ?? 0}</span></div>
+                <div className="flex justify-between"><span>Orders via QR</span><span className="font-mono font-medium">{analytics[table._id].totalOrders ?? 0}</span></div>
                 {analytics[table._id].lastScanned && (
-                  <div className="flex justify-between"><span>Last Scanned</span><span className="font-medium">{new Date(analytics[table._id].lastScanned).toLocaleDateString()}</span></div>
+                  <div className="flex justify-between"><span>Last Scanned</span><span className="font-mono font-medium">{new Date(analytics[table._id].lastScanned).toLocaleDateString()}</span></div>
                 )}
               </div>
             )}

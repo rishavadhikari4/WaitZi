@@ -20,7 +20,8 @@ import OrderTracking from '../pages/public/OrderTracking';
 import PaymentResult from '../pages/public/PaymentResult';
 
 // Dashboard pages
-import OverviewPage from '../pages/dashboard/OverviewPage';
+import DashboardRouter from '../pages/dashboard/DashboardRouter';
+import RealTimePage from '../pages/dashboard/RealTimePage';
 
 // Order pages
 import OrderListPage from '../pages/orders/OrderListPage';
@@ -55,7 +56,15 @@ import RoleManagementPage from '../pages/users/RoleManagementPage';
 import NotFoundPage from '../pages/errors/NotFoundPage';
 import UnauthorizedPage from '../pages/errors/UnauthorizedPage';
 
-const allStaff = ['admin'];
+// Any authenticated staff member — waiter/chef/kitchen_staff included — can reach
+// these; pages that show privileged actions (edit/delete) already gate those
+// buttons internally via isAdmin/isManager checks.
+const staffRoles = ['admin', 'manager', 'waiter', 'chef', 'kitchen_staff'];
+// Editing menu/tables/categories and viewing financial records: no internal
+// per-page gating exists on these forms, so the route itself is the boundary.
+const manageRoles = ['admin', 'manager'];
+// Staff accounts and role/permission management: most sensitive, admin only.
+const adminOnly = ['admin'];
 
 export default function AppRoutes() {
   return (
@@ -79,44 +88,50 @@ export default function AppRoutes() {
         <Route path="/order/payment-result" element={<PaymentResult />} />
       </Route>
 
-      {/* Dashboard routes (protected — admin only) */}
-      <Route element={<ProtectedRoute allowedRoles={allStaff}><DashboardLayout /></ProtectedRoute>}>
-        <Route path="/dashboard" element={<OverviewPage />} />
+      {/* Dashboard shell — one instance, mounted once any staff role is in.
+          Individual routes below re-check tighter roles so the sidebar/socket
+          connections in DashboardLayout don't remount when crossing tiers. */}
+      <Route element={<ProtectedRoute allowedRoles={staffRoles}><DashboardLayout /></ProtectedRoute>}>
+        <Route path="/dashboard" element={<DashboardRouter />} />
+        <Route path="/dashboard/live" element={<RealTimePage />} />
 
         {/* Orders */}
         <Route path="/orders" element={<OrderListPage />} />
         <Route path="/orders/:id" element={<OrderDetailPage />} />
         <Route path="/kitchen" element={<KitchenQueuePage />} />
 
-        {/* Menu */}
-        <Route path="/menu" element={<MenuListPage />} />
-        <Route path="/menu/new" element={<MenuFormPage />} />
-        <Route path="/menu/:id/edit" element={<MenuFormPage />} />
-        <Route path="/categories" element={<CategoryListPage />} />
-        <Route path="/categories/new" element={<CategoryFormPage />} />
-        <Route path="/categories/:id/edit" element={<CategoryFormPage />} />
-
-        {/* Tables */}
+        {/* Tables (view is staff-wide; TableListPage itself hides edit/delete unless admin/manager) */}
         <Route path="/tables" element={<TableListPage />} />
-        <Route path="/tables/new" element={<TableFormPage />} />
-        <Route path="/tables/:id/edit" element={<TableFormPage />} />
-        <Route path="/tables/qr" element={<QRManagementPage />} />
 
-        {/* Payments */}
-        <Route path="/payments" element={<PaymentListPage />} />
-        <Route path="/payments/daily-sales" element={<DailySalesPage />} />
+        {/* Payment processing from an order — any staff can take payment */}
         <Route path="/payments/process/:orderId" element={<ProcessPaymentPage />} />
-        <Route path="/payments/:id" element={<PaymentDetailPage />} />
 
-        {/* Users */}
-        <Route path="/users" element={<UserListPage />} />
-        <Route path="/users/new" element={<UserFormPage />} />
-        <Route path="/users/:id" element={<UserDetailPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/roles" element={<RoleManagementPage />} />
-
-        {/* Password */}
         <Route path="/change-password" element={<ChangePasswordPage />} />
+
+        {/* Menu (no internal role gating on the forms — route is the boundary) */}
+        <Route path="/menu" element={<ProtectedRoute allowedRoles={manageRoles}><MenuListPage /></ProtectedRoute>} />
+        <Route path="/menu/new" element={<ProtectedRoute allowedRoles={manageRoles}><MenuFormPage /></ProtectedRoute>} />
+        <Route path="/menu/:id/edit" element={<ProtectedRoute allowedRoles={manageRoles}><MenuFormPage /></ProtectedRoute>} />
+        <Route path="/categories" element={<ProtectedRoute allowedRoles={manageRoles}><CategoryListPage /></ProtectedRoute>} />
+        <Route path="/categories/new" element={<ProtectedRoute allowedRoles={manageRoles}><CategoryFormPage /></ProtectedRoute>} />
+        <Route path="/categories/:id/edit" element={<ProtectedRoute allowedRoles={manageRoles}><CategoryFormPage /></ProtectedRoute>} />
+
+        {/* Tables management */}
+        <Route path="/tables/new" element={<ProtectedRoute allowedRoles={manageRoles}><TableFormPage /></ProtectedRoute>} />
+        <Route path="/tables/:id/edit" element={<ProtectedRoute allowedRoles={manageRoles}><TableFormPage /></ProtectedRoute>} />
+        <Route path="/tables/qr" element={<ProtectedRoute allowedRoles={manageRoles}><QRManagementPage /></ProtectedRoute>} />
+
+        {/* Payments records */}
+        <Route path="/payments" element={<ProtectedRoute allowedRoles={manageRoles}><PaymentListPage /></ProtectedRoute>} />
+        <Route path="/payments/daily-sales" element={<ProtectedRoute allowedRoles={manageRoles}><DailySalesPage /></ProtectedRoute>} />
+        <Route path="/payments/:id" element={<ProtectedRoute allowedRoles={manageRoles}><PaymentDetailPage /></ProtectedRoute>} />
+
+        {/* Staff accounts and role/permission management: most sensitive, admin only */}
+        <Route path="/users" element={<ProtectedRoute allowedRoles={adminOnly}><UserListPage /></ProtectedRoute>} />
+        <Route path="/users/new" element={<ProtectedRoute allowedRoles={adminOnly}><UserFormPage /></ProtectedRoute>} />
+        <Route path="/users/:id" element={<ProtectedRoute allowedRoles={adminOnly}><UserDetailPage /></ProtectedRoute>} />
+        <Route path="/roles" element={<ProtectedRoute allowedRoles={adminOnly}><RoleManagementPage /></ProtectedRoute>} />
       </Route>
 
       {/* Error routes */}

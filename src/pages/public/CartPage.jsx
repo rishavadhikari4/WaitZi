@@ -61,18 +61,18 @@ export default function CartPage() {
     <div className="pb-6">
       <Link
         to={`/order/table/${tableNumber}`}
-        className="inline-flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-700 font-medium mb-5 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-blue-700 font-medium mb-5 transition-colors"
       >
         <Icon icon="mdi:arrow-left" className="w-4 h-4" /> Continue browsing
       </Link>
 
       <div className="flex items-center gap-2.5 mb-5">
-        <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center">
-          <Icon icon="mdi:shopping-outline" className="w-5 h-5 text-blue-600" />
+        <div className="w-9 h-9 bg-sidebar rounded-lg flex items-center justify-center">
+          <Icon icon="mdi:shopping-outline" className="w-5 h-5 text-blue-400" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">Your Cart</h2>
-          <p className="text-xs text-gray-400">{cart.items.length} {cart.items.length === 1 ? 'item' : 'items'}</p>
+          <h2 className="text-xl font-semibold text-gray-900">Your Order</h2>
+          <p className="text-xs text-gray-400 font-mono">{cart.items.length} {cart.items.length === 1 ? 'item' : 'items'}</p>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ export default function CartPage() {
             <Icon icon="mdi:shopping-outline" className="w-7 h-7 text-gray-400" />
           </div>
           <p className="text-gray-400">Your cart is empty</p>
-          <Link to={`/order/table/${tableNumber}`} className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2 inline-block">
+          <Link to={`/order/table/${tableNumber}`} className="text-blue-700 hover:text-blue-800 text-sm font-medium mt-2 inline-block">
             Browse menu
           </Link>
         </div>
@@ -90,27 +90,29 @@ export default function CartPage() {
         <div className="space-y-3 mb-6">
           {cart.items.map((item) => (
             <div key={item.menuItem._id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-sm text-gray-800">{item.menuItem.name}</h3>
-                  <p className="text-xs text-blue-500 font-medium mt-0.5">{formatCurrency(item.menuItem.price)} each</p>
-                </div>
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="font-semibold text-sm text-gray-800">{item.menuItem.name}</h3>
+                <span className="leader" />
+                <p className="font-mono font-bold text-gray-800 text-sm shrink-0">
+                  {formatCurrency(item.menuItem.price * item.quantity)}
+                </p>
                 <button
                   onClick={() => cart.removeItem(item.menuItem._id)}
-                  className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-1 -mr-1 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
                 >
                   <Icon icon="mdi:trash-can-outline" className="w-4 h-4" />
                 </button>
               </div>
               <div className="flex items-center justify-between mt-3">
+                <p className="text-xs text-gray-400 font-mono">{formatCurrency(item.menuItem.price)} each</p>
                 <div className="flex items-center gap-2.5">
                   <button
                     onClick={() => cart.updateQuantity(item.menuItem._id, item.quantity - 1)}
-                    className="w-8 h-8 rounded-full border-2 border-gray-200 text-blue-600 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                    className="w-8 h-8 rounded-full border-2 border-gray-200 text-blue-700 flex items-center justify-center hover:bg-gray-50 transition-colors"
                   >
                     <Icon icon="mdi:minus" className="w-3.5 h-3.5" />
                   </button>
-                  <span className="text-sm font-bold text-blue-700 w-5 text-center">{item.quantity}</span>
+                  <span className="text-sm font-mono font-bold text-blue-800 w-5 text-center">{item.quantity}</span>
                   <button
                     onClick={() => cart.updateQuantity(item.menuItem._id, Math.min(item.quantity + 1, 20))}
                     className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors shadow-sm"
@@ -118,7 +120,6 @@ export default function CartPage() {
                     <Icon icon="mdi:plus" className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <p className="font-bold text-gray-800">{formatCurrency(item.menuItem.price * item.quantity)}</p>
               </div>
               <div className="relative mt-3">
                 <Icon icon="mdi:note-text-outline" className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
@@ -138,9 +139,9 @@ export default function CartPage() {
 
       {cart.items.length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm space-y-4">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center pb-3 border-b border-dashed border-gray-200">
             <span className="text-gray-500 font-medium">Total</span>
-            <span className="text-xl font-bold text-blue-600">{formatCurrency(cart.total)}</span>
+            <span className="text-xl font-mono font-bold text-gray-900">{formatCurrency(cart.total)}</span>
           </div>
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-gray-700">Your Name</label>
@@ -160,7 +161,7 @@ export default function CartPage() {
                 type="button"
                 onClick={() => setPayNow(false)}
                 className={`flex flex-col items-center gap-1 py-3 rounded-lg border-2 text-sm font-semibold transition-colors ${
-                  !payNow ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                  !payNow ? 'border-blue-500 bg-blue-50 text-blue-800' : 'border-gray-200 text-gray-500 hover:bg-gray-50'
                 }`}
               >
                 <Icon icon="mdi:cash" className="w-4 h-4" />
@@ -170,7 +171,7 @@ export default function CartPage() {
                 type="button"
                 onClick={() => setPayNow(true)}
                 className={`flex flex-col items-center gap-1 py-3 rounded-lg border-2 text-sm font-semibold transition-colors ${
-                  payNow ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                  payNow ? 'border-blue-500 bg-blue-50 text-blue-800' : 'border-gray-200 text-gray-500 hover:bg-gray-50'
                 }`}
               >
                 <Icon icon="mdi:wallet-outline" className="w-4 h-4" />

@@ -120,10 +120,10 @@ export default function TableListPage() {
         {tables.map((table) => (
           <div key={table._id} className="card">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-bold">Table {table.tableNumber}</h3>
+              <h3 className="font-mono text-lg font-bold">T{table.tableNumber}</h3>
               <Badge status={table.status} />
             </div>
-            <p className="text-sm text-gray-500 mb-1">Capacity: {table.capacity}</p>
+            <p className="text-sm text-gray-500 mb-1">Capacity: <span className="font-mono">{table.capacity}</span></p>
             {table.assignedWaiter && (
               <p className="text-sm text-gray-500">Waiter: {table.assignedWaiter.firstName} {table.assignedWaiter.lastName}</p>
             )}
@@ -154,13 +154,13 @@ export default function TableListPage() {
               <div className="flex gap-2 mt-3 pt-3 border-t border-gray-200">
                 <button
                   onClick={() => navigate(`/tables/${table._id}/edit`)}
-                  className="flex items-center gap-1 text-sm text-black hover:underline"
+                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600"
                 >
                   <Icon icon="mdi:pencil-outline" className="w-3.5 h-3.5" /> Edit
                 </button>
                 <button
                   onClick={() => setDeleteId(table._id)}
-                  className="flex items-center gap-1 text-sm text-red-600 hover:underline"
+                  className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700"
                 >
                   <Icon icon="mdi:trash-can-outline" className="w-3.5 h-3.5" /> Delete
                 </button>

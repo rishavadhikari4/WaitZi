@@ -104,7 +104,7 @@ export default function OrderDetailPage() {
   return (
     <div>
       <PageHeader
-        title={`Order #${order._id?.slice(-6)}`}
+        title={<>Order <span className="font-mono">#{order._id?.slice(-6)}</span></>}
         actions={
           <div className="flex gap-2">
             {!['Cancelled', 'Completed', 'Paid'].includes(order.status) && (
@@ -122,46 +122,47 @@ export default function OrderDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <div className="card">
-            <h3 className="font-semibold mb-4">Order Items</h3>
+            <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Order Items</h3>
             <div className="space-y-3">
               {order.items?.map((item, i) => (
-                <div key={item._id || i} className="flex items-center justify-between py-2 border-b border-gray-200 last:border-0">
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">{item.menuItem?.name || 'Item'}</p>
-                    <p className="text-xs text-gray-500">Qty: {item.quantity} {item.notes && `- ${item.notes}`}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      {updatingItemId === item._id && <Spinner size="sm" />}
-                      <select
-                        value={item.status}
-                        onChange={(e) => handleItemStatusChange(item._id, e.target.value)}
-                        disabled={updatingItemId === item._id}
-                        className={`text-xs border border-gray-200 rounded px-2 py-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        {ORDER_ITEM_STATUSES.map((s) => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <p className="font-medium text-sm w-20 text-right">
-                      {formatCurrency(item.subtotal || item.menuItem?.price * item.quantity)}
+                <div key={item._id || i} className="flex items-center gap-2 py-2 border-b border-dashed border-gray-200 last:border-0">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm">
+                      <span className="font-mono text-gray-500">{item.quantity}×</span> {item.menuItem?.name || 'Item'}
                     </p>
+                    {item.notes && <p className="text-xs text-gray-500">{item.notes}</p>}
                   </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    {updatingItemId === item._id && <Spinner size="sm" />}
+                    <select
+                      value={item.status}
+                      onChange={(e) => handleItemStatusChange(item._id, e.target.value)}
+                      disabled={updatingItemId === item._id}
+                      className={`text-xs border border-gray-200 rounded px-2 py-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {ORDER_ITEM_STATUSES.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <span className="leader" />
+                  <p className="font-mono font-medium text-sm shrink-0">
+                    {formatCurrency(item.subtotal || item.menuItem?.price * item.quantity)}
+                  </p>
                 </div>
               ))}
             </div>
-            <div className="mt-4 pt-3 border-t border-gray-200 space-y-1">
-              <div className="flex justify-between text-sm"><span>Subtotal</span><span>{formatCurrency(order.totalAmount)}</span></div>
-              {order.discount > 0 && <div className="flex justify-between text-sm text-red-600"><span>Discount</span><span>-{formatCurrency(order.discount)}</span></div>}
-              <div className="flex justify-between font-bold"><span>Total</span><span>{formatCurrency(order.finalAmount || order.totalAmount)}</span></div>
+            <div className="mt-4 pt-3 border-t border-dashed border-gray-200 space-y-1 font-mono">
+              <div className="flex justify-between text-sm"><span className="font-sans">Subtotal</span><span>{formatCurrency(order.totalAmount)}</span></div>
+              {order.discount > 0 && <div className="flex justify-between text-sm text-red-600"><span className="font-sans">Discount</span><span>-{formatCurrency(order.discount)}</span></div>}
+              <div className="flex justify-between font-bold text-base"><span className="font-sans">Total</span><span>{formatCurrency(order.finalAmount || order.totalAmount)}</span></div>
             </div>
           </div>
         </div>
 
         <div className="space-y-6">
           <div className="card space-y-3">
-            <h3 className="font-semibold">Details</h3>
+            <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Details</h3>
             <div className="text-sm space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-500">Status</span>
@@ -172,9 +173,9 @@ export default function OrderDetailPage() {
                   <Badge status={order.status} />
                 </span>
               </div>
-              <div className="flex justify-between"><span className="text-gray-500">Table</span><span>{order.table?.tableNumber ?? '-'}</span></div>
+              <div className="flex justify-between"><span className="text-gray-500">Table</span><span className="font-mono">{order.table?.tableNumber ?? '-'}</span></div>
               <div className="flex justify-between"><span className="text-gray-500">Customer</span><span>{order.customerName || '-'}</span></div>
-              <div className="flex justify-between"><span className="text-gray-500">Created</span><span>{formatDateTime(order.createdAt)}</span></div>
+              <div className="flex justify-between"><span className="text-gray-500">Created</span><span className="font-mono text-xs">{formatDateTime(order.createdAt)}</span></div>
               {order.assignedWaiter && (
                 <div className="flex justify-between"><span className="text-gray-500">Waiter</span><span>{order.assignedWaiter.firstName} {order.assignedWaiter.lastName}</span></div>
               )}
@@ -183,7 +184,7 @@ export default function OrderDetailPage() {
 
           <div className="card">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold">Update Status</h3>
+              <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Update Status</h3>
               {isUpdatingStatus && <Spinner size="sm" />}
             </div>
             <Select

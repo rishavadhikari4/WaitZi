@@ -92,8 +92,8 @@ export default function WaiterDashboard() {
         {/* My Assigned Tables */}
         <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">My Tables</h3>
-            <button onClick={() => navigate('/tables')} className="text-sm text-gray-500 hover:text-gray-900">
+            <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">My Tables</h3>
+            <button onClick={() => navigate('/tables')} className="text-xs font-medium text-gray-500 hover:text-gray-900">
               View all
             </button>
           </div>
@@ -105,11 +105,11 @@ export default function WaiterDashboard() {
                 <div
                   key={table._id}
                   onClick={() => navigate('/tables')}
-                  className="border border-gray-200 rounded-lg p-3 text-center cursor-pointer hover:bg-gray-50"
+                  className="border border-gray-200 rounded-lg p-3 text-center cursor-pointer hover:border-gray-300 hover:bg-gray-50 transition-colors"
                 >
-                  <p className="font-bold text-lg">T{table.tableNumber}</p>
+                  <p className="font-mono font-bold text-lg tabular-nums">T{table.tableNumber}</p>
                   <Badge status={table.status} />
-                  <p className="text-xs text-gray-400 mt-1">Cap: {table.capacity}</p>
+                  <p className="text-xs text-gray-400 mt-1 font-mono">Cap: {table.capacity}</p>
                 </div>
               ))}
             </div>
@@ -119,32 +119,32 @@ export default function WaiterDashboard() {
         {/* Recent / Pending Orders */}
         <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Recent Orders</h3>
-            <button onClick={() => navigate('/orders')} className="text-sm text-gray-500 hover:text-gray-900">
+            <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Recent Orders</h3>
+            <button onClick={() => navigate('/orders')} className="text-xs font-medium text-gray-500 hover:text-gray-900">
               View all
             </button>
           </div>
           {orders.length === 0 ? (
             <p className="text-gray-400 text-sm text-center py-6">No active orders</p>
           ) : (
-            <div className="space-y-2 max-h-80 overflow-y-auto">
+            <div className="space-y-1.5 max-h-80 overflow-y-auto">
               {orders.slice(0, 10).map((order) => (
                 <div
                   key={order._id}
                   onClick={() => navigate(`/orders/${order._id}`)}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer border border-gray-200"
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 cursor-pointer border border-gray-200"
                 >
-                  <div>
-                    <p className="text-sm font-medium">
-                      Table {order.table?.tableNumber ?? '?'} - {order.customerName || 'Customer'}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium truncate">
+                      Table {order.table?.tableNumber ?? '?'} — {order.customerName || 'Customer'}
                     </p>
-                    <p className="text-xs text-gray-400">
-                      {order.items?.length ?? 0} items &middot; {formatTime(order.createdAt)}
+                    <p className="text-xs text-gray-400 font-mono">
+                      {order.items?.length ?? 0} items · {formatTime(order.createdAt)}
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right shrink-0">
                     <Badge status={order.status} />
-                    <p className="text-xs font-medium mt-1">{formatCurrency(order.finalAmount || order.totalAmount)}</p>
+                    <p className="text-xs font-mono font-medium mt-1">{formatCurrency(order.finalAmount || order.totalAmount)}</p>
                   </div>
                 </div>
               ))}
@@ -156,8 +156,8 @@ export default function WaiterDashboard() {
       {/* Ready to Serve Alert */}
       {readyOrders.length > 0 && (
         <div className="mt-6 bg-emerald-50 border border-emerald-200 rounded-xl p-4">
-          <h3 className="font-semibold text-emerald-800 mb-2 flex items-center gap-2">
-            <Icon icon="mdi:check-circle" className="w-5 h-5" />
+          <h3 className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+            <Icon icon="mdi:check-circle" className="w-3.5 h-3.5" />
             Ready to Serve ({readyOrders.length})
           </h3>
           <div className="space-y-2">
@@ -168,7 +168,7 @@ export default function WaiterDashboard() {
                 className="flex items-center justify-between p-2 bg-white rounded-lg cursor-pointer hover:bg-emerald-50"
               >
                 <span className="text-sm font-medium">
-                  Table {order.table?.tableNumber ?? '?'} - #{order._id?.slice(-6)}
+                  Table {order.table?.tableNumber ?? '?'} — <span className="font-mono text-gray-500">#{order._id?.slice(-6)}</span>
                 </span>
                 <Badge status="Ready" />
               </div>

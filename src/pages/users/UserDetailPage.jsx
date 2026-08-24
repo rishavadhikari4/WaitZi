@@ -107,7 +107,7 @@ export default function UserDetailPage() {
           {user.image ? (
             <img src={user.image} alt="" className="w-16 h-16 rounded-full object-cover" />
           ) : (
-            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-xl font-bold">
+            <div className="w-16 h-16 bg-blue-50 text-blue-700 rounded-full flex items-center justify-center text-xl font-bold">
               {user.firstName?.[0]}{user.lastName?.[0]}
             </div>
           )}
@@ -121,7 +121,7 @@ export default function UserDetailPage() {
           <div><span className="text-gray-500">Phone</span><p className="font-medium mt-1">{user.number || '-'}</p></div>
           <div><span className="text-gray-500">Address</span><p className="font-medium mt-1">{user.address || '-'}</p></div>
           <div><span className="text-gray-500">Status</span><div className="mt-1"><Badge status={user.status} /></div></div>
-          <div><span className="text-gray-500">Joined</span><p className="font-medium mt-1">{formatDateTime(user.createdAt)}</p></div>
+          <div><span className="text-gray-500">Joined</span><p className="font-mono text-xs mt-1.5">{formatDateTime(user.createdAt)}</p></div>
         </div>
       </div>
 

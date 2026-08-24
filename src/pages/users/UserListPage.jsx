@@ -60,7 +60,7 @@ export default function UserListPage() {
     {
       key: 'name', label: 'Name', sortable: true, render: (row) => (
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-xs font-medium">
+          <div className="w-8 h-8 bg-blue-50 text-blue-700 rounded-full flex items-center justify-center text-xs font-semibold">
             {row.firstName?.[0]}{row.lastName?.[0]}
           </div>
           <span>{row.firstName} {row.lastName}</span>

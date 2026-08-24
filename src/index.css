@@ -33,6 +33,9 @@
   .tab-button-active {
     @apply bg-white text-gray-900 shadow-sm;
   }
+  .leader {
+    @apply flex-1 border-b border-dotted border-gray-300 mx-2 translate-y-[-3px];
+  }
 }
 
 @layer utilities {

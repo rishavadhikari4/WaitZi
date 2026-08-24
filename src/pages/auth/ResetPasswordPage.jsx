@@ -62,7 +62,7 @@ export default function ResetPasswordPage() {
       <div className="space-y-4 text-center">
         <h2 className="text-xl font-semibold">Invalid Reset Link</h2>
         <p className="text-gray-500">This password reset link is invalid or has expired.</p>
-        <Link to="/forgot-password" className="text-black hover:underline text-sm">
+        <Link to="/forgot-password" className="text-blue-600 hover:text-blue-700 hover:underline text-sm">
           Request a new reset link
         </Link>
       </div>
@@ -115,7 +115,7 @@ export default function ResetPasswordPage() {
         Reset Password
       </Button>
       <p className="text-center text-sm">
-        <Link to="/login" className="text-black hover:underline">Back to login</Link>
+        <Link to="/login" className="text-blue-600 hover:text-blue-700 hover:underline">Back to login</Link>
       </p>
     </form>
   );

@@ -2,7 +2,7 @@
   <title id="waitziFaviconTitle">WaitZi</title>
   <style>
     .wing { fill: #2C2C2A; }
-    .knot { fill: #D85A30; fill: AccentColor; }
+    .knot { fill: #2563EB; fill: AccentColor; }
     @media (prefers-color-scheme: dark) {
       .wing { fill: #F5F1EA; }
     }

@@ -87,7 +87,7 @@ export default function MenuListPage() {
     },
     { key: 'name', label: 'Name', sortable: true },
     { key: 'category', label: 'Category', render: (row) => row.category?.name || '-' },
-    { key: 'price', label: 'Price', sortable: true, render: (row) => formatCurrency(row.price) },
+    { key: 'price', label: 'Price', sortable: true, render: (row) => <span className="font-mono font-medium">{formatCurrency(row.price)}</span> },
     {
       key: 'availabilityStatus', label: 'Status', render: (row) => (
         <button
@@ -101,9 +101,13 @@ export default function MenuListPage() {
     },
     ...(isAdmin ? [{
       key: 'actions', label: '', render: (row) => (
-        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-          <button onClick={() => navigate(`/menu/${row._id}/edit`)} className="text-sm text-black hover:underline">Edit</button>
-          <button onClick={() => setDeleteId(row._id)} className="text-sm text-red-600 hover:underline">Delete</button>
+        <div className="flex gap-3" onClick={(e) => e.stopPropagation()}>
+          <button onClick={() => navigate(`/menu/${row._id}/edit`)} className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600">
+            <Icon icon="mdi:pencil-outline" className="w-3.5 h-3.5" /> Edit
+          </button>
+          <button onClick={() => setDeleteId(row._id)} className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700">
+            <Icon icon="mdi:trash-can-outline" className="w-3.5 h-3.5" /> Delete
+          </button>
         </div>
       )
     }] : []),

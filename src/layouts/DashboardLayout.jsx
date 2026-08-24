@@ -59,7 +59,20 @@ function OrderToast({ t, table, customer, items, onView }) {
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [railCollapsed, setRailCollapsed] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('sidebar-rail-collapsed') || 'false');
+    } catch { return false; }
+  });
   const navigate = useNavigate();
+
+  const toggleRail = () => {
+    setRailCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem('sidebar-rail-collapsed', JSON.stringify(next));
+      return next;
+    });
+  };
 
   // Use a dedicated 'admin-alerts' room so navigating away from /dashboard
   // (which leaves the 'dashboard' room) does not kill this listener.
@@ -94,8 +107,13 @@ export default function DashboardLayout() {
 
   return (
     <div className="min-h-screen bg-app">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="lg:ml-64">
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        railCollapsed={railCollapsed}
+        onToggleRail={toggleRail}
+      />
+      <div className={`transition-[margin] duration-300 ease-in-out ${railCollapsed ? 'lg:ml-20' : 'lg:ml-64'}`}>
         <Header onMenuClick={() => setSidebarOpen(true)} />
         <main className="p-4 md:p-6">
           <Outlet />

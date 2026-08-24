@@ -193,7 +193,7 @@ function OverviewTab({ stats, salesTrends, popularItems }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card">
-          <h3 className="font-semibold mb-4">Sales Trend</h3>
+          <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Sales Trend</h3>
           {salesTrends.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={salesTrends}>
@@ -210,7 +210,7 @@ function OverviewTab({ stats, salesTrends, popularItems }) {
         </div>
 
         <div className="card">
-          <h3 className="font-semibold mb-4">Popular Items</h3>
+          <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Popular Items</h3>
           {popularItems.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={popularItems.slice(0, 8)}>
@@ -251,7 +251,7 @@ function SalesTab({ data }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div className="card">
-          <h3 className="font-semibold mb-4">Hourly Sales Distribution</h3>
+          <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Hourly Sales Distribution</h3>
           {hourlyFormatted.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={hourlyFormatted}>
@@ -268,7 +268,7 @@ function SalesTab({ data }) {
         </div>
 
         <div className="card">
-          <h3 className="font-semibold mb-4">Payment Methods</h3>
+          <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Payment Methods</h3>
           {methodsFormatted.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
@@ -286,14 +286,14 @@ function SalesTab({ data }) {
 
       {topCustomers.length > 0 && (
         <div className="card">
-          <h3 className="font-semibold mb-4">Top Customers</h3>
+          <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Top Customers</h3>
           <div className="space-y-2">
             {topCustomers.slice(0, 5).map((c, i) => (
               <div key={i} className="flex justify-between items-center text-sm py-1 border-b border-gray-200 last:border-0">
                 <span className="font-medium">{c._id || 'Guest'}</span>
                 <div className="flex gap-4 text-gray-500">
-                  <span>{c.orderCount} orders</span>
-                  <span className="font-medium text-gray-900">{formatCurrency(c.totalSpent)}</span>
+                  <span className="font-mono">{c.orderCount} orders</span>
+                  <span className="font-mono font-medium text-gray-900">{formatCurrency(c.totalSpent)}</span>
                 </div>
               </div>
             ))}
@@ -328,7 +328,7 @@ function OperationsTab({ data }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div className="card">
-          <h3 className="font-semibold mb-4">Order Status Distribution</h3>
+          <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Order Status Distribution</h3>
           {distFormatted.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
@@ -344,19 +344,19 @@ function OperationsTab({ data }) {
         </div>
 
         <div className="card">
-          <h3 className="font-semibold mb-4">Table Utilization</h3>
+          <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Table Utilization</h3>
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center p-3 bg-emerald-50 rounded-lg">
-                <p className="text-2xl font-bold">{tableStatus.available ?? 0}</p>
+                <p className="text-2xl font-mono font-bold tabular-nums">{tableStatus.available ?? 0}</p>
                 <p className="text-xs text-gray-500">Available</p>
               </div>
               <div className="text-center p-3 bg-red-50 rounded-lg">
-                <p className="text-2xl font-bold">{tableStatus.occupied ?? 0}</p>
+                <p className="text-2xl font-mono font-bold tabular-nums">{tableStatus.occupied ?? 0}</p>
                 <p className="text-xs text-gray-500">Occupied</p>
               </div>
               <div className="text-center p-3 bg-amber-50 rounded-lg">
-                <p className="text-2xl font-bold">{tableStatus.reserved ?? 0}</p>
+                <p className="text-2xl font-mono font-bold tabular-nums">{tableStatus.reserved ?? 0}</p>
                 <p className="text-xs text-gray-500">Reserved</p>
               </div>
             </div>
@@ -371,11 +371,11 @@ function OperationsTab({ data }) {
       </div>
 
       <div className="card">
-        <h3 className="font-semibold mb-4">Service Metrics</h3>
+        <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Service Metrics</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
-          <div><span className="text-gray-500">Total Orders</span><p className="font-semibold text-lg">{service.totalOrders ?? 0}</p></div>
-          <div><span className="text-gray-500">Cancelled Orders</span><p className="font-semibold text-lg">{service.cancelledOrders ?? 0}</p></div>
-          <div><span className="text-gray-500">Total Staff</span><p className="font-semibold text-lg">{staff.total ?? 0}</p></div>
+          <div><span className="text-gray-500">Total Orders</span><p className="font-mono font-semibold text-lg tabular-nums">{service.totalOrders ?? 0}</p></div>
+          <div><span className="text-gray-500">Cancelled Orders</span><p className="font-mono font-semibold text-lg tabular-nums">{service.cancelledOrders ?? 0}</p></div>
+          <div><span className="text-gray-500">Total Staff</span><p className="font-mono font-semibold text-lg tabular-nums">{staff.total ?? 0}</p></div>
         </div>
       </div>
     </>
@@ -405,7 +405,7 @@ function MenuTab({ data }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div className="card">
-          <h3 className="font-semibold mb-4">Top Selling Items</h3>
+          <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Top Selling Items</h3>
           {topFormatted.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={topFormatted} layout="vertical">
@@ -422,7 +422,7 @@ function MenuTab({ data }) {
         </div>
 
         <div className="card">
-          <h3 className="font-semibold mb-4">Under-Performing Items</h3>
+          <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Under-Performing Items</h3>
           {underPerforming.length > 0 ? (
             <div className="space-y-2">
               {underPerforming.slice(0, 8).map((item, i) => (
@@ -440,8 +440,8 @@ function MenuTab({ data }) {
 
       {alerts.length > 0 && (
         <div className="card border-2 border-amber-200 bg-amber-50">
-          <h3 className="font-semibold mb-3 flex items-center gap-2">
-            <Icon icon="mdi:alert" className="w-4 h-4 text-amber-600" /> Out of Stock Items
+          <h3 className="text-[11px] font-semibold text-amber-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+            <Icon icon="mdi:alert" className="w-3.5 h-3.5 text-amber-600" /> Out of Stock Items
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {alerts.map((item, i) => (

@@ -51,10 +51,15 @@ export default function OrderListPage() {
 
   const columns = [
     { key: 'id', label: 'Order ID', render: (row) => <span className="font-mono text-xs">#{row._id?.slice(-6)}</span> },
-    { key: 'table', label: 'Table', render: (row) => row.table?.tableNumber ?? '-' },
+    { key: 'table', label: 'Table', render: (row) => <span className="font-mono">{row.table?.tableNumber ?? '-'}</span> },
     { key: 'customerName', label: 'Customer', sortable: true },
-    { key: 'items', label: 'Items', render: (row) => row.items?.length ?? 0 },
-    { key: 'finalAmount', label: 'Amount', sortable: true, render: (row) => formatCurrency(row.finalAmount || row.totalAmount) },
+    { key: 'items', label: 'Items', render: (row) => <span className="font-mono">{row.items?.length ?? 0}</span> },
+    {
+      key: 'finalAmount',
+      label: 'Amount',
+      sortable: true,
+      render: (row) => <span className="font-mono font-medium">{formatCurrency(row.finalAmount || row.totalAmount)}</span>,
+    },
     {
       key: 'status',
       label: 'Status',
@@ -67,7 +72,7 @@ export default function OrderListPage() {
         </div>
       ),
     },
-    { key: 'createdAt', label: 'Created', sortable: true, render: (row) => formatDateTime(row.createdAt) },
+    { key: 'createdAt', label: 'Created', sortable: true, render: (row) => <span className="font-mono text-xs text-gray-500">{formatDateTime(row.createdAt)}</span> },
   ];
 
   return (

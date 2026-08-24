@@ -56,18 +56,37 @@ export default function PaymentDetailPage() {
   return (
     <div className="max-w-2xl">
       <PageHeader
-        title={`Payment #${payment._id?.slice(-6)}`}
+        title={<>Payment <span className="font-mono">#{payment._id?.slice(-6)}</span></>}
         actions={canRefund && <Button variant="danger" onClick={() => { setRefundData({ amount: payment.amount, reason: '' }); setShowRefund(true); }}>Refund</Button>}
       />
-      <div className="card space-y-4">
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div><span className="text-gray-500">Status</span><div className="mt-1"><Badge status={payment.paymentStatus} /></div></div>
-          <div><span className="text-gray-500">Method</span><div className="mt-1"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PAYMENT_METHOD_COLORS[payment.paymentMethod]?.badge || 'bg-gray-100 text-gray-800'}`}>{payment.paymentMethod}</span></div></div>
-          <div><span className="text-gray-500">Amount</span><p className="font-medium mt-1">{formatCurrency(payment.amount)}</p></div>
-          <div><span className="text-gray-500">Transaction ID</span><p className="font-medium mt-1">{payment.transactionId || '-'}</p></div>
-          <div><span className="text-gray-500">Order</span><p className="font-medium mt-1">#{(payment.order?._id || payment.order)?.slice(-6)}</p></div>
-          <div><span className="text-gray-500">Time</span><p className="font-medium mt-1">{payment.paymentTime ? formatDateTime(payment.paymentTime) : '-'}</p></div>
-          <div><span className="text-gray-500">Handled By</span><p className="font-medium mt-1">{payment.handledBy ? `${payment.handledBy.firstName} ${payment.handledBy.lastName}` : '-'}</p></div>
+      <div className="card space-y-1">
+        <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-200">
+          <span className="text-sm text-gray-500">Status</span>
+          <Badge status={payment.paymentStatus} />
+        </div>
+        <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-200">
+          <span className="text-sm text-gray-500">Method</span>
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PAYMENT_METHOD_COLORS[payment.paymentMethod]?.badge || 'bg-gray-100 text-gray-800'}`}>{payment.paymentMethod}</span>
+        </div>
+        <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-200">
+          <span className="text-sm text-gray-500">Amount</span>
+          <span className="font-mono font-bold text-base">{formatCurrency(payment.amount)}</span>
+        </div>
+        <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-200">
+          <span className="text-sm text-gray-500">Transaction ID</span>
+          <span className="font-mono text-sm">{payment.transactionId || '-'}</span>
+        </div>
+        <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-200">
+          <span className="text-sm text-gray-500">Order</span>
+          <span className="font-mono text-sm">#{(payment.order?._id || payment.order)?.slice(-6)}</span>
+        </div>
+        <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-200">
+          <span className="text-sm text-gray-500">Time</span>
+          <span className="font-mono text-xs text-gray-600">{payment.paymentTime ? formatDateTime(payment.paymentTime) : '-'}</span>
+        </div>
+        <div className="flex justify-between items-center py-2">
+          <span className="text-sm text-gray-500">Handled By</span>
+          <span className="text-sm font-medium">{payment.handledBy ? `${payment.handledBy.firstName} ${payment.handledBy.lastName}` : '-'}</span>
         </div>
       </div>
 

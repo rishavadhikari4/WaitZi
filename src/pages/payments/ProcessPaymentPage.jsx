@@ -77,18 +77,19 @@ export default function ProcessPaymentPage() {
       <PageHeader title="Process Payment" />
 
       <div className="card mb-6">
-        <h3 className="font-semibold mb-3">Order Summary</h3>
-        <div className="space-y-2 text-sm">
+        <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-3">Order Summary</h3>
+        <div className="space-y-2 text-sm font-mono">
           {order.items?.map((item, i) => (
-            <div key={i} className="flex justify-between">
-              <span>{item.quantity}x {item.menuItem?.name || 'Item'}</span>
-              <span>{formatCurrency(item.subtotal || item.menuItem?.price * item.quantity)}</span>
+            <div key={i} className="flex items-center gap-2">
+              <span className="font-sans shrink-0">{item.quantity}× {item.menuItem?.name || 'Item'}</span>
+              <span className="leader" />
+              <span className="shrink-0">{formatCurrency(item.subtotal || item.menuItem?.price * item.quantity)}</span>
             </div>
           ))}
-          <div className="border-t border-gray-200 pt-2 mt-2">
-            <div className="flex justify-between"><span>Subtotal</span><span>{formatCurrency(order.totalAmount)}</span></div>
-            {order.discount > 0 && <div className="flex justify-between text-red-600"><span>Discount</span><span>-{formatCurrency(order.discount)}</span></div>}
-            <div className="flex justify-between font-bold text-lg mt-1"><span>Total</span><span>{formatCurrency(order.finalAmount || order.totalAmount)}</span></div>
+          <div className="border-t border-dashed border-gray-200 pt-2 mt-2">
+            <div className="flex justify-between"><span className="font-sans">Subtotal</span><span>{formatCurrency(order.totalAmount)}</span></div>
+            {order.discount > 0 && <div className="flex justify-between text-red-600"><span className="font-sans">Discount</span><span>-{formatCurrency(order.discount)}</span></div>}
+            <div className="flex justify-between font-bold text-lg mt-1"><span className="font-sans">Total</span><span>{formatCurrency(order.finalAmount || order.totalAmount)}</span></div>
           </div>
         </div>
       </div>

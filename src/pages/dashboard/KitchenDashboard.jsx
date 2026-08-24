@@ -89,86 +89,82 @@ export default function KitchenDashboard() {
           {orders.map((order) => {
             const hasPending = order.items?.some((i) => i.status === 'Pending');
             const allReady = order.items?.every((i) => i.status === 'Ready' || i.status === 'Served');
+            const railColor = hasPending ? 'bg-amber-400' : allReady ? 'bg-emerald-400' : 'bg-blue-400';
             return (
-              <div
-                key={order._id}
-                className={`card border-2 ${
-                  hasPending ? 'border-amber-300' : allReady ? 'border-emerald-300' : 'border-blue-300'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <span className="text-xl font-bold">Table {order.table?.tableNumber ?? '?'}</span>
-                    <Badge status={order.status} className="ml-2" />
+              <div key={order._id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex">
+                <div className={`w-1.5 shrink-0 ${railColor}`} />
+                <div className="p-4 flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-mono text-xl font-bold tabular-nums">T{order.table?.tableNumber ?? '?'}</span>
+                    <span className="text-xs text-gray-400 font-mono">{formatTime(order.createdAt)}</span>
                   </div>
-                  <span className="text-sm text-gray-400">{formatTime(order.createdAt)}</span>
-                </div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Badge status={order.status} />
+                    {order.customerName && <p className="text-sm text-gray-500 truncate">{order.customerName}</p>}
+                  </div>
 
-                {order.customerName && (
-                  <p className="text-sm text-gray-500 mb-2">{order.customerName}</p>
-                )}
+                  <div className="space-y-2">
+                    {order.items?.map((item, i) => (
+                      <div
+                        key={item._id || i}
+                        className={`flex items-center justify-between p-2 rounded-lg border-b border-dashed last:border-0 ${
+                          item.status === 'Pending'
+                            ? 'bg-amber-50 border-amber-100'
+                            : item.status === 'Cooking'
+                            ? 'bg-blue-50 border-blue-100'
+                            : item.status === 'Ready'
+                            ? 'bg-emerald-50 border-emerald-100'
+                            : 'bg-gray-50 border-gray-100'
+                        }`}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">
+                            <span className="font-mono font-bold">{item.quantity}×</span> {item.menuItem?.name || 'Item'}
+                          </p>
+                          {item.notes && (
+                            <p className="text-xs text-orange-600 mt-0.5">* {item.notes}</p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 ml-2 shrink-0">
+                          {item.status === 'Pending' && (
+                            <button
+                              onClick={() => handleItemStatus(order._id, item._id, 'Cooking')}
+                              disabled={updatingItemId === item._id}
+                              className={`px-3 py-1.5 bg-blue-600 text-white rounded-md text-xs font-medium hover:bg-blue-700 flex items-center gap-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                              {updatingItemId === item._id ? <Spinner size="sm" /> : <Icon icon="mdi:fire" className="w-3.5 h-3.5" />} Cook
+                            </button>
+                          )}
+                          {item.status === 'Cooking' && (
+                            <button
+                              onClick={() => handleItemStatus(order._id, item._id, 'Ready')}
+                              disabled={updatingItemId === item._id}
+                              className={`px-3 py-1.5 bg-emerald-600 text-white rounded-md text-xs font-medium hover:bg-emerald-700 flex items-center gap-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                              {updatingItemId === item._id ? <Spinner size="sm" /> : <Icon icon="mdi:check-circle" className="w-3.5 h-3.5" />} Done
+                            </button>
+                          )}
+                          {item.status === 'Ready' && (
+                            <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
+                              Ready
+                            </span>
+                          )}
+                          {item.status === 'Served' && (
+                            <span className="px-2 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-medium">
+                              Served
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
-                <div className="space-y-2">
-                  {order.items?.map((item, i) => (
-                    <div
-                      key={item._id || i}
-                      className={`flex items-center justify-between p-2 rounded-lg ${
-                        item.status === 'Pending'
-                          ? 'bg-amber-50'
-                          : item.status === 'Cooking'
-                          ? 'bg-blue-50'
-                          : item.status === 'Ready'
-                          ? 'bg-emerald-50'
-                          : 'bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          <span className="font-bold">{item.quantity}x</span> {item.menuItem?.name || 'Item'}
-                        </p>
-                        {item.notes && (
-                          <p className="text-xs text-orange-600 mt-0.5">* {item.notes}</p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 ml-2">
-                        {item.status === 'Pending' && (
-                          <button
-                            onClick={() => handleItemStatus(order._id, item._id, 'Cooking')}
-                            disabled={updatingItemId === item._id}
-                            className={`px-3 py-1.5 bg-blue-600 text-white rounded-md text-xs font-medium hover:bg-blue-700 flex items-center gap-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          >
-                            {updatingItemId === item._id ? <Spinner size="sm" /> : <Icon icon="mdi:fire" className="w-3.5 h-3.5" />} Cook
-                          </button>
-                        )}
-                        {item.status === 'Cooking' && (
-                          <button
-                            onClick={() => handleItemStatus(order._id, item._id, 'Ready')}
-                            disabled={updatingItemId === item._id}
-                            className={`px-3 py-1.5 bg-emerald-600 text-white rounded-md text-xs font-medium hover:bg-emerald-700 flex items-center gap-1 ${updatingItemId === item._id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                          >
-                            {updatingItemId === item._id ? <Spinner size="sm" /> : <Icon icon="mdi:check-circle" className="w-3.5 h-3.5" />} Done
-                          </button>
-                        )}
-                        {item.status === 'Ready' && (
-                          <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
-                            Ready
-                          </span>
-                        )}
-                        {item.status === 'Served' && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-medium">
-                            Served
-                          </span>
-                        )}
-                      </div>
+                  {order.note && (
+                    <div className="mt-3 p-2 bg-amber-50 rounded-lg border border-amber-200">
+                      <p className="text-xs text-amber-800">Order Note: {order.note}</p>
                     </div>
-                  ))}
+                  )}
                 </div>
-
-                {order.note && (
-                  <div className="mt-3 p-2 bg-amber-50 rounded-lg border border-amber-200">
-                    <p className="text-xs text-amber-800">Order Note: {order.note}</p>
-                  </div>
-                )}
               </div>
             );
           })}

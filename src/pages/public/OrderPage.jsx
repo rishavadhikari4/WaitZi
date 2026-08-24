@@ -98,16 +98,20 @@ export default function OrderPage() {
   return (
     <div className="pb-32">
       {/* Header banner */}
-      <div className="bg-blue-600 -mx-4 -mt-4 px-4 pt-8 pb-6 mb-5 text-center">
-        <div className="flex items-center justify-center gap-2 mb-1">
-          <Icon icon="mdi:silverware-fork-knife" className="w-5 h-5 text-blue-200" />
-          <h1 className="text-white font-bold text-lg tracking-wide">
+      <div className="bg-sidebar -mx-4 -mt-4 px-4 pt-8 pb-7 mb-5 text-center relative overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-full opacity-[0.06] bg-[radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:16px_16px]" />
+        <div className="relative">
+          <div className="flex items-center justify-center gap-2 mb-1.5">
+            <Icon icon="mdi:silverware-fork-knife" className="w-4 h-4 text-blue-400" />
+            <span className="text-blue-400/80 text-[11px] font-semibold uppercase tracking-[0.2em]">Table Ordering</span>
+          </div>
+          <h1 className="text-gray-50 font-bold text-xl tracking-tight">
             {data.restaurant?.name || 'Our Menu'}
           </h1>
-        </div>
-        <div className="inline-flex items-center gap-1.5 bg-white/20 text-white px-3 py-1 rounded-full text-sm font-medium mt-1">
-          <Icon icon="mdi:map-marker-outline" className="w-3.5 h-3.5" />
-          Table {tableNumber}
+          <div className="inline-flex items-center gap-1.5 bg-white/10 text-gray-100 px-3 py-1 rounded-full text-xs font-mono font-medium mt-2.5">
+            <Icon icon="mdi:map-marker-outline" className="w-3.5 h-3.5 text-blue-400" />
+            TABLE {tableNumber}
+          </div>
         </div>
       </div>
 
@@ -123,14 +127,14 @@ export default function OrderPage() {
         />
       </div>
 
-      {/* Category pills */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-5 scrollbar-hide">
+      {/* Category tabs */}
+      <div className="flex gap-1.5 overflow-x-auto pb-2 mb-5 scrollbar-hide">
         <button
           onClick={() => setActiveCategory('all')}
-          className={`px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium transition-all flex-shrink-0 ${
+          className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap font-semibold transition-all flex-shrink-0 border-b-2 ${
             activeCategory === 'all'
-              ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
-              : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300 hover:text-blue-600'
+              ? 'bg-blue-50 text-blue-800 border-blue-500'
+              : 'bg-white text-gray-500 border-transparent hover:text-gray-800 hover:bg-gray-50'
           }`}
         >
           All
@@ -139,10 +143,10 @@ export default function OrderPage() {
           <button
             key={cat._id}
             onClick={() => setActiveCategory(cat._id)}
-            className={`px-4 py-2 rounded-full text-sm whitespace-nowrap font-medium transition-all flex-shrink-0 ${
+            className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap font-semibold transition-all flex-shrink-0 border-b-2 ${
               activeCategory === cat._id
-                ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
-                : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300 hover:text-blue-600'
+                ? 'bg-blue-50 text-blue-800 border-blue-500'
+                : 'bg-white text-gray-500 border-transparent hover:text-gray-800 hover:bg-gray-50'
             }`}
           >
             {cat.name}
@@ -199,7 +203,7 @@ export default function OrderPage() {
                     </div>
 
                     <div className="flex items-center justify-between mt-2.5 gap-2">
-                      <p className="font-bold text-blue-600 text-base">
+                      <p className="font-mono font-bold text-gray-800 text-base">
                         {formatCurrency(item.price)}
                       </p>
 
@@ -214,11 +218,11 @@ export default function OrderPage() {
                         <div className="flex items-center gap-1.5 flex-shrink-0">
                           <button
                             onClick={() => cart.updateQuantity(item._id, qty - 1)}
-                            className="w-7 h-7 rounded-lg border-2 border-gray-200 text-blue-600 flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all"
+                            className="w-7 h-7 rounded-lg border-2 border-gray-200 text-blue-700 flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all"
                           >
                             <Icon icon="mdi:minus" className="w-3 h-3" />
                           </button>
-                          <span className="text-sm font-bold text-blue-700 w-5 text-center tabular-nums">
+                          <span className="text-sm font-mono font-bold text-blue-800 w-5 text-center tabular-nums">
                             {qty}
                           </span>
                           <button
@@ -240,21 +244,21 @@ export default function OrderPage() {
 
       {/* Floating cart bar */}
       {cart.itemCount > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 px-4 pb-5 pt-10 bg-gradient-to-t from-gray-100 via-gray-100/95 to-transparent pointer-events-none">
+        <div className="fixed bottom-0 left-0 right-0 px-4 pb-5 pt-10 bg-gradient-to-t from-app via-app/95 to-transparent pointer-events-none">
           <button
             onClick={() => navigate(`/order/table/${tableNumber}/cart`)}
-            className="w-full max-w-lg sm:max-w-2xl lg:max-w-3xl mx-auto flex items-center justify-between bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white py-3.5 px-5 rounded-2xl font-semibold shadow-xl shadow-blue-300/50 transition-all pointer-events-auto"
+            className="w-full max-w-lg sm:max-w-2xl lg:max-w-3xl mx-auto flex items-center justify-between bg-sidebar hover:bg-gray-900 active:scale-[0.98] text-white py-3.5 px-5 rounded-2xl font-semibold shadow-xl shadow-gray-900/20 transition-all pointer-events-auto"
           >
             <span className="flex items-center gap-2">
               <span className="relative">
-                <Icon icon="mdi:cart-outline" className="w-5 h-5" />
-                <span className="absolute -top-2 -right-2.5 bg-white text-blue-600 text-[10px] font-bold rounded-full flex items-center justify-center leading-none w-4 h-4">
+                <Icon icon="mdi:cart-outline" className="w-5 h-5 text-blue-400" />
+                <span className="absolute -top-2 -right-2.5 bg-blue-500 text-gray-900 text-[10px] font-bold rounded-full flex items-center justify-center leading-none w-4 h-4">
                   {cart.itemCount}
                 </span>
               </span>
               <span className="ml-1">View Cart</span>
             </span>
-            <span className="font-bold">{formatCurrency(cart.total)}</span>
+            <span className="font-mono font-bold">{formatCurrency(cart.total)}</span>
           </button>
         </div>
       )}

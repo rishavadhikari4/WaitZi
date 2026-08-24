@@ -60,7 +60,7 @@ export default function DailySalesPage() {
 
       {chartData.length > 0 && (
         <div className="card">
-          <h3 className="font-semibold mb-4">Payment Method Breakdown</h3>
+          <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Payment Method Breakdown</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}>
