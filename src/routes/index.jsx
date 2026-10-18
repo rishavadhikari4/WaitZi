@@ -18,6 +18,7 @@ import CartPage from '../pages/public/CartPage';
 import OrderConfirmation from '../pages/public/OrderConfirmation';
 import OrderTracking from '../pages/public/OrderTracking';
 import PaymentResult from '../pages/public/PaymentResult';
+import LandingPage from '../pages/public/LandingPage';
 
 // Dashboard pages
 import DashboardRouter from '../pages/dashboard/DashboardRouter';
@@ -70,6 +71,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/landing" element={<LandingPage />} />
 
       {/* Auth routes */}
       <Route element={<PublicRoute><AuthLayout /></PublicRoute>}>
