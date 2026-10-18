@@ -70,8 +70,8 @@ const adminOnly = ['admin'];
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/landing" element={<LandingPage />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/landing" element={<Navigate to="/" replace />} />
 
       {/* Auth routes */}
       <Route element={<PublicRoute><AuthLayout /></PublicRoute>}>
