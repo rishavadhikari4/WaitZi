@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { motion as Motion, AnimatePresence, MotionConfig, useScroll, useTransform, useSpring, useMotionValueEvent } from 'motion/react';
@@ -26,9 +26,9 @@ const FEATURES = [
 ];
 
 const SETUP = [
-  { icon: 'mdi:storefront-outline', title: 'Create your restaurant', text: 'Sign up and invite your team in minutes. No hardware to buy, no installation.', points: ['Ready in under 5 minutes', 'Works on any phone, tablet or laptop', 'Every feature unlocked from day one'] },
-  { icon: 'mdi:qrcode-plus', title: 'Add your menu & tables', text: 'Add categories, items and prices, then print a QR code for each table.', points: ['Photos, prices and availability per item', 'Printable QR for every table', 'Changes go live instantly'] },
-  { icon: 'mdi:rocket-launch-outline', title: 'Start taking orders', text: 'Guests scan and order, the kitchen cooks, waiters serve and you get paid.', points: ['Orders go straight to the kitchen', 'Guests track their order live', 'Take payment from any device'] },
+  { title: 'Create your restaurant', text: 'Sign up and invite your team in minutes. No hardware to buy, no installation.', points: ['Ready in under 5 minutes', 'Works on any phone, tablet or laptop', 'Every feature unlocked from day one'] },
+  { title: 'Add your menu & tables', text: 'Add categories, items and prices, then print a QR code for each table.', points: ['Photos, prices and availability per item', 'Printable QR for every table', 'Changes go live instantly'] },
+  { title: 'Start taking orders', text: 'Guests scan and order, the kitchen cooks, waiters serve and you get paid.', points: ['Orders go straight to the kitchen', 'Guests track their order live', 'Take payment from any device'] },
 ];
 
 // ponytail: placeholder quotes; swap in real customer reviews before launch
@@ -300,78 +300,278 @@ function Devices() {
   );
 }
 
+/* ---------- Setup steps: small, believable product screens ---------- */
+
+function ScreenCard({ title, meta, children, footer }) {
+  return (
+    <div className="rounded-xl bg-white border border-stone-200 shadow-[0_1px_2px_rgba(28,25,23,0.04),0_8px_24px_-12px_rgba(28,25,23,0.12)] overflow-hidden text-[13px]">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-stone-100">
+        <span className="font-semibold text-stone-900">{title}</span>
+        {meta}
+      </div>
+      {children}
+      {footer && <div className="px-4 py-3 border-t border-stone-100 bg-stone-50/60">{footer}</div>}
+    </div>
+  );
+}
+
+const ROLE_TONE = {
+  Admin: 'bg-stone-900 text-white',
+  Manager: 'bg-orange-100 text-orange-800',
+  Waiter: 'bg-stone-100 text-stone-700',
+  Chef: 'bg-amber-100 text-amber-800',
+};
+
+function TeamScreen() {
+  const people = [['Anisha Shrestha', 'Admin'], ['Bikash Gurung', 'Manager'], ['Sita Rai', 'Waiter'], ['Ramesh Thapa', 'Chef']];
+  return (
+    <ScreenCard
+      title="Team"
+      meta={<span className="rounded-md bg-orange-600 text-white text-xs font-medium px-2.5 py-1">Invite</span>}
+    >
+      <ul className="divide-y divide-stone-100">
+        {people.map(([name, role]) => (
+          <li key={name} className="flex items-center gap-3 px-4 py-2.5">
+            <span className="w-7 h-7 rounded-full bg-stone-100 text-stone-600 text-[11px] font-semibold flex items-center justify-center">
+              {name.split(' ').map((w) => w[0]).join('')}
+            </span>
+            <span className="flex-1 text-stone-800">{name}</span>
+            <span className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${ROLE_TONE[role]}`}>{role}</span>
+          </li>
+        ))}
+      </ul>
+    </ScreenCard>
+  );
+}
+
+function MenuScreen2() {
+  const items = [['Chicken Momo', 'Momo', 250, true], ['Jhol Momo', 'Momo', 280, true], ['Thakali Set', 'Mains', 450, false], ['Masala Tea', 'Drinks', 60, true]];
+  return (
+    <ScreenCard title="Menu" meta={<span className="text-xs text-stone-500">12 items</span>}>
+      <ul className="divide-y divide-stone-100">
+        {items.map(([name, cat, price, on]) => (
+          <li key={name} className="flex items-center gap-3 px-4 py-2.5">
+            <span className="flex-1">
+              <span className="block text-stone-800">{name}</span>
+              <span className="block text-[11px] text-stone-400">{cat}</span>
+            </span>
+            <span className="tabular-nums text-stone-700">Rs {price}</span>
+            <span className={`w-7 h-4 rounded-full p-0.5 flex ${on ? 'bg-orange-600 justify-end' : 'bg-stone-300 justify-start'}`}>
+              <span className="w-3 h-3 rounded-full bg-white" />
+            </span>
+          </li>
+        ))}
+      </ul>
+    </ScreenCard>
+  );
+}
+
+function OrderScreen() {
+  const lines = [['Chicken Momo', 2, 500, 'Ready'], ['Thakali Set', 1, 450, 'Cooking'], ['Mango Lassi', 2, 240, 'New'], ['Masala Tea', 3, 180, 'Served']];
+  const tone = {
+    New: 'text-amber-700 bg-amber-50',
+    Ready: 'text-green-700 bg-green-50',
+    Cooking: 'text-orange-700 bg-orange-50',
+    Served: 'text-stone-500 bg-stone-100',
+  };
+  return (
+    <ScreenCard
+      title="Table 4 · #1042"
+      meta={<span className="text-xs text-stone-500">Dine in</span>}
+      footer={
+        <div className="flex justify-between font-semibold text-stone-900">
+          <span>Total</span>
+          <span className="tabular-nums">Rs 1,370</span>
+        </div>
+      }
+    >
+      <ul className="divide-y divide-stone-100">
+        {lines.map(([name, qty, amount, status]) => (
+          <li key={name} className="flex items-center gap-3 px-4 py-2.5">
+            <span className="w-5 text-stone-400 tabular-nums">{qty}×</span>
+            <span className="flex-1 text-stone-800">{name}</span>
+            <span className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${tone[status]}`}>{status}</span>
+            <span className="w-14 text-right tabular-nums text-stone-700">Rs {amount}</span>
+          </li>
+        ))}
+      </ul>
+    </ScreenCard>
+  );
+}
+
+const SETUP_SCREENS = [TeamScreen, MenuScreen2, OrderScreen];
+
 function Setup() {
   const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 70%', 'end 60%'] });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 65%', 'end 55%'] });
   const line = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-  const mocks = ['roles', 'menu', 'orders'];
   return (
     <section id="setup" className="px-4 py-20 sm:py-24 bg-stone-50 scroll-mt-20">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <SectionHead eyebrow="Get started" title="Up and running before lunch" text="Three steps from sign-up to your first order." />
-        <div ref={ref} className="relative mt-12 md:mt-16">
-          {/* Desktop timeline spine that fills as you scroll */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-stone-200 -translate-x-1/2" />
-          <Motion.div style={{ scaleY: line }} className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-500 to-amber-400 origin-top -translate-x-1/2" />
-          <div className="space-y-5 md:space-y-20">
-            {SETUP.map((s, i) => (
-              <div key={s.title} className={`relative md:grid md:grid-cols-2 md:gap-24 md:items-center ${i % 2 ? 'md:[&>*:nth-child(2)]:order-2' : ''}`}>
-                <Motion.span
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true, margin: '-30%' }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-                  className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-orange-600 text-white font-display font-bold text-lg items-center justify-center ring-8 ring-stone-50 shadow-lg shadow-orange-600/30 z-10"
-                >
-                  {i + 1}
-                </Motion.span>
-                <Reveal className="rounded-3xl bg-white ring-1 ring-stone-200 shadow-sm p-6 md:p-0 md:bg-transparent md:ring-0 md:shadow-none">
-                  <div className="flex items-center gap-3">
-                    <span className="md:hidden w-9 h-9 shrink-0 rounded-xl bg-orange-600 text-white font-display font-bold flex items-center justify-center shadow-md shadow-orange-600/30">{i + 1}</span>
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold px-2.5 py-1">
-                      <Icon icon={s.icon} className="w-4 h-4" />Step {i + 1}
-                    </span>
-                  </div>
-                  <h3 className="mt-3 font-display text-2xl sm:text-3xl font-bold leading-tight">{s.title}</h3>
-                  <p className="mt-2 text-stone-600">{s.text}</p>
-                  <ul className="mt-4 space-y-2">{s.points.map((p) => <Check key={p}>{p}</Check>)}</ul>
-                  <div className="md:hidden mt-5 h-40 rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 ring-1 ring-orange-100 flex items-center justify-center overflow-hidden">
-                    <MiniMock type={mocks[i]} />
-                  </div>
-                </Reveal>
-                <Reveal delay={0.15} className="hidden md:block">
-                  <div className="rounded-3xl bg-gradient-to-br from-orange-50 via-white to-amber-50 ring-1 ring-stone-200 h-56 flex items-center justify-center shadow-sm">
-                    <Motion.div whileHover={{ scale: 1.05, rotate: -1 }}><MiniMock type={mocks[i]} /></Motion.div>
-                  </div>
-                </Reveal>
-              </div>
-            ))}
-          </div>
+        <div ref={ref} className="relative mt-16">
+          {/* Spine: grey track, orange fill that follows the scroll */}
+          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-stone-200 -translate-x-1/2" />
+          <Motion.div
+            style={{ scaleY: line }}
+            className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-orange-500 origin-top -translate-x-1/2"
+          />
+          <ol className="space-y-16 md:space-y-28">
+            {SETUP.map((s, i) => {
+              const Screen = SETUP_SCREENS[i];
+              const textLeft = i % 2 === 0;
+              return (
+                <li key={s.title} className="relative grid md:grid-cols-[1fr_5rem_1fr] md:items-center pl-12 md:pl-0">
+                  {/* Node: lives in its own column, so it never covers text */}
+                  <Motion.span
+                    initial={{ backgroundColor: '#fafaf9', borderColor: '#d6d3d1', color: '#a8a29e' }}
+                    whileInView={{ backgroundColor: '#ea580c', borderColor: '#ea580c', color: '#ffffff' }}
+                    viewport={{ once: true, margin: '0px 0px -45% 0px' }}
+                    transition={{ duration: 0.35 }}
+                    className="absolute left-4 top-0 -translate-x-1/2 md:static md:translate-x-0 md:col-start-2 md:row-start-1 md:justify-self-center w-9 h-9 rounded-full border font-mono text-xs font-semibold flex items-center justify-center ring-4 ring-stone-50 z-10"
+                  >
+                    0{i + 1}
+                  </Motion.span>
+
+                  <Reveal
+                    className={`md:row-start-1 ${textLeft ? 'md:col-start-1 md:pr-4' : 'md:col-start-3 md:pl-4'}`}
+                  >
+                    <h3 className="font-display text-2xl sm:text-3xl font-bold text-stone-900">{s.title}</h3>
+                    <p className="mt-2 text-stone-600 max-w-md">{s.text}</p>
+                    <ul className="mt-4 space-y-1.5 text-sm text-stone-600">
+                      {s.points.map((p) => (
+                        <li key={p} className="flex gap-2">
+                          <Icon icon="mdi:check" className="w-4 h-4 mt-0.5 shrink-0 text-orange-600" />
+                          {p}
+                        </li>
+                      ))}
+                    </ul>
+                  </Reveal>
+
+                  <Reveal
+                    delay={0.1}
+                    className={`mt-6 md:mt-0 md:row-start-1 w-full max-w-sm ${
+                      textLeft ? 'md:col-start-3 md:justify-self-start md:pl-4' : 'md:col-start-1 md:justify-self-end md:pr-4'
+                    }`}
+                  >
+                    <Screen />
+                  </Reveal>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </div>
     </section>
   );
 }
 
-function ReviewCard({ r }) {
-  return (
-    <figure className="shrink-0 w-80 rounded-2xl ring-1 ring-stone-200 p-6 bg-white">
-      <div className="flex text-amber-500">{[...Array(5)].map((_, i) => <Icon key={i} icon="mdi:star" className="w-4 h-4" />)}</div>
-      <blockquote className="mt-3 text-sm text-stone-700">“{r.text}”</blockquote>
-      <figcaption className="mt-4 flex items-center gap-3">
-        <span className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 text-white font-bold flex items-center justify-center">{r.name[0]}</span>
-        <span className="text-sm"><span className="font-semibold block">{r.name}</span><span className="text-stone-500">{r.place}</span></span>
-      </figcaption>
-    </figure>
-  );
-}
+const initials = (name) => name.split(/[\s,]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
 
 function Reviews() {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const r = REVIEWS[active];
+  const go = (i) => setActive((i + REVIEWS.length) % REVIEWS.length);
+
+  useEffect(() => {
+    if (paused) return undefined;
+    const id = setTimeout(() => setActive((i) => (i + 1) % REVIEWS.length), 7000);
+    return () => clearTimeout(id);
+  }, [active, paused]);
+
   return (
-    <section id="reviews" className="py-24 scroll-mt-20 space-y-6">
-      <div className="px-4 mb-8"><SectionHead eyebrow="Reviews" title="Loved by restaurant teams" text="What owners, managers and chefs say after switching to WaitZi." /></div>
-      <Marquee speed={45}>{REVIEWS.slice(0, 3).concat(REVIEWS.slice(0, 3)).map((r, i) => <ReviewCard key={i} r={r} />)}</Marquee>
-      <Marquee speed={50} reverse>{REVIEWS.slice(3).concat(REVIEWS.slice(3)).map((r, i) => <ReviewCard key={i} r={r} />)}</Marquee>
+    <section id="reviews" className="px-4 py-24 scroll-mt-20">
+      <div className="max-w-6xl mx-auto">
+        <Reveal className="max-w-2xl">
+          <p className="text-sm font-semibold text-orange-600 uppercase tracking-wider">Reviews</p>
+          <h2 className="mt-2 font-display text-3xl sm:text-5xl font-bold tracking-tight text-stone-900">Loved by restaurant teams</h2>
+          <p className="mt-4 text-lg text-stone-600">What owners, managers and chefs say after switching to WaitZi.</p>
+        </Reveal>
+
+        <div
+          className="mt-14 grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] gap-10 lg:gap-16 [&>*]:min-w-0"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          {/* Featured quote */}
+          <Reveal className="flex flex-col">
+            <span aria-hidden className="font-display text-7xl leading-none h-12 text-orange-600 select-none">“</span>
+            <div className="relative min-h-[11rem] sm:min-h-[9.5rem]">
+              <AnimatePresence mode="wait">
+                <Motion.figure
+                  key={active}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.4, ease }}
+                >
+                  <blockquote className="font-display text-2xl sm:text-3xl font-medium leading-snug text-stone-900">{r.text}</blockquote>
+                  <figcaption className="mt-8 flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-full bg-stone-900 text-white text-sm font-semibold flex items-center justify-center">
+                      {initials(r.name)}
+                    </span>
+                    <span>
+                      <span className="block font-semibold text-stone-900">{r.name}</span>
+                      <span className="block text-sm text-stone-500">{r.place}</span>
+                    </span>
+                  </figcaption>
+                </Motion.figure>
+              </AnimatePresence>
+            </div>
+
+            <div className="mt-10 flex items-center gap-4">
+              <button type="button" onClick={() => go(active - 1)} aria-label="Previous review" className="w-10 h-10 rounded-full border border-stone-300 text-stone-700 hover:border-stone-900 hover:text-stone-900 flex items-center justify-center transition-colors">
+                <Icon icon="mdi:arrow-left" className="w-4 h-4" />
+              </button>
+              <button type="button" onClick={() => go(active + 1)} aria-label="Next review" className="w-10 h-10 rounded-full border border-stone-300 text-stone-700 hover:border-stone-900 hover:text-stone-900 flex items-center justify-center transition-colors">
+                <Icon icon="mdi:arrow-right" className="w-4 h-4" />
+              </button>
+              <span className="font-mono text-sm text-stone-500 tabular-nums">
+                {String(active + 1).padStart(2, '0')} <span className="text-stone-300">/</span> {String(REVIEWS.length).padStart(2, '0')}
+              </span>
+              {/* Progress toward the next quote */}
+              <span className="relative h-px flex-1 bg-stone-200 overflow-hidden">
+                {!paused && (
+                  <Motion.span
+                    key={active}
+                    className="absolute inset-y-0 left-0 bg-orange-600"
+                    initial={{ width: 0 }}
+                    animate={{ width: '100%' }}
+                    transition={{ duration: 7, ease: 'linear' }}
+                  />
+                )}
+              </span>
+            </div>
+          </Reveal>
+
+          {/* Everyone else, one tap away */}
+          <Reveal delay={0.1}>
+            <ul className="border-t border-stone-200">
+              {REVIEWS.map((rv, i) => (
+                <li key={rv.text} className="border-b border-stone-200">
+                  <button
+                    type="button"
+                    onClick={() => setActive(i)}
+                    aria-current={i === active}
+                    className="group w-full text-left py-4 flex gap-4 items-start"
+                  >
+                    <span className={`mt-0.5 w-8 h-8 shrink-0 rounded-full text-[11px] font-semibold flex items-center justify-center transition-colors ${i === active ? 'bg-orange-600 text-white' : 'bg-stone-100 text-stone-600 group-hover:bg-stone-200'}`}>
+                      {initials(rv.name)}
+                    </span>
+                    <span className="min-w-0">
+                      <span className={`block text-sm font-semibold transition-colors ${i === active ? 'text-stone-900' : 'text-stone-700'}`}>
+                        {rv.name} <span className="font-normal text-stone-400">· {rv.place}</span>
+                      </span>
+                      <span className={`block text-sm truncate transition-colors ${i === active ? 'text-stone-600' : 'text-stone-400 group-hover:text-stone-500'}`}>{rv.text}</span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </div>
+      </div>
     </section>
   );
 }
