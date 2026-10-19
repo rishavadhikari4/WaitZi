@@ -304,33 +304,44 @@ function Setup() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 70%', 'end 60%'] });
   const line = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  const mocks = ['roles', 'menu', 'orders'];
   return (
-    <section className="px-4 py-24 bg-stone-50">
+    <section id="setup" className="px-4 py-20 sm:py-24 bg-stone-50 scroll-mt-20">
       <div className="max-w-5xl mx-auto">
         <SectionHead eyebrow="Get started" title="Up and running before lunch" text="Three steps from sign-up to your first order." />
-        <div ref={ref} className="relative mt-16">
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-0.5 bg-stone-200 -translate-x-1/2" />
-          <Motion.div style={{ scaleY: line }} className="absolute left-6 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-500 to-amber-400 origin-top -translate-x-1/2" />
-          <div className="space-y-16">
+        <div ref={ref} className="relative mt-12 md:mt-16">
+          {/* Desktop timeline spine that fills as you scroll */}
+          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-stone-200 -translate-x-1/2" />
+          <Motion.div style={{ scaleY: line }} className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-500 to-amber-400 origin-top -translate-x-1/2" />
+          <div className="space-y-5 md:space-y-20">
             {SETUP.map((s, i) => (
-              <div key={s.title} className={`relative grid md:grid-cols-2 gap-8 items-center pl-16 md:pl-0 ${i % 2 ? 'md:[&>*:first-child]:order-2' : ''}`}>
+              <div key={s.title} className={`relative md:grid md:grid-cols-2 md:gap-24 md:items-center ${i % 2 ? 'md:[&>*:nth-child(2)]:order-2' : ''}`}>
                 <Motion.span
                   initial={{ scale: 0 }}
                   whileInView={{ scale: 1 }}
-                  viewport={{ once: true, margin: '-40%' }}
+                  viewport={{ once: true, margin: '-30%' }}
                   transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-                  className="absolute left-6 md:left-1/2 top-0 md:top-1/2 -translate-x-1/2 md:-translate-y-1/2 w-12 h-12 rounded-full bg-orange-600 text-white font-display font-bold text-lg flex items-center justify-center ring-8 ring-stone-50 z-10"
+                  className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-orange-600 text-white font-display font-bold text-lg items-center justify-center ring-8 ring-stone-50 shadow-lg shadow-orange-600/30 z-10"
                 >
                   {i + 1}
                 </Motion.span>
-                <Reveal className={i % 2 ? 'md:pl-16' : 'md:pr-16 md:text-right'}>
-                  <h3 className="font-display text-2xl sm:text-3xl font-bold">{s.title}</h3>
+                <Reveal className="rounded-3xl bg-white ring-1 ring-stone-200 shadow-sm p-6 md:p-0 md:bg-transparent md:ring-0 md:shadow-none">
+                  <div className="flex items-center gap-3">
+                    <span className="md:hidden w-9 h-9 shrink-0 rounded-xl bg-orange-600 text-white font-display font-bold flex items-center justify-center shadow-md shadow-orange-600/30">{i + 1}</span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-100 text-orange-700 text-xs font-semibold px-2.5 py-1">
+                      <Icon icon={s.icon} className="w-4 h-4" />Step {i + 1}
+                    </span>
+                  </div>
+                  <h3 className="mt-3 font-display text-2xl sm:text-3xl font-bold leading-tight">{s.title}</h3>
                   <p className="mt-2 text-stone-600">{s.text}</p>
-                  <ul className={`mt-4 space-y-2 ${i % 2 ? '' : 'md:[&>li]:flex-row-reverse md:[&>li]:text-right'}`}>{s.points.map((p) => <Check key={p}>{p}</Check>)}</ul>
+                  <ul className="mt-4 space-y-2">{s.points.map((p) => <Check key={p}>{p}</Check>)}</ul>
+                  <div className="md:hidden mt-5 h-40 rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 ring-1 ring-orange-100 flex items-center justify-center overflow-hidden">
+                    <MiniMock type={mocks[i]} />
+                  </div>
                 </Reveal>
-                <Reveal delay={0.15} className={i % 2 ? 'md:pr-16' : 'md:pl-16'}>
-                  <div className="rounded-3xl bg-white ring-1 ring-stone-200 h-52 flex items-center justify-center shadow-sm">
-                    <Motion.div whileHover={{ scale: 1.05, rotate: -1 }}><MiniMock type={['roles', 'menu', 'orders'][i]} /></Motion.div>
+                <Reveal delay={0.15} className="hidden md:block">
+                  <div className="rounded-3xl bg-gradient-to-br from-orange-50 via-white to-amber-50 ring-1 ring-stone-200 h-56 flex items-center justify-center shadow-sm">
+                    <Motion.div whileHover={{ scale: 1.05, rotate: -1 }}><MiniMock type={mocks[i]} /></Motion.div>
                   </div>
                 </Reveal>
               </div>
@@ -450,9 +461,8 @@ function Footer() {
         </div>
         <div>
           <h4 className="text-white font-semibold mb-4">Get in touch</h4>
-          {/* ponytail: placeholder contact details, replace with real ones */}
           <ul className="space-y-2 text-sm">
-            <li className="flex items-center gap-2"><Icon icon="mdi:email-outline" />hello@waitzi.com</li>
+            <li><a href="mailto:rishavadhikari657@gmail.com" className="flex items-center gap-2 hover:text-orange-400 break-all"><Icon icon="mdi:email-outline" className="shrink-0" />rishavadhikari657@gmail.com</a></li>
             <li className="flex items-center gap-2"><Icon icon="mdi:map-marker-outline" />Kathmandu, Nepal</li>
           </ul>
         </div>
